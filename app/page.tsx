@@ -1,5 +1,7 @@
 "use client"
 
+import type React from "react"
+
 import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -24,6 +26,7 @@ import {
   Calendar,
   Users,
   BookOpen,
+  Send,
 } from "lucide-react"
 import Link from "next/link"
 
@@ -41,6 +44,15 @@ interface BlogPost {
 
 export default function HomePage() {
   const [posts, setPosts] = useState<BlogPost[]>([])
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    subject: "",
+    message: "",
+  })
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [submitStatus, setSubmitStatus] = useState<"idle" | "success" | "error">("idle")
 
   useEffect(() => {
     // Load latest blog posts
@@ -106,6 +118,57 @@ export default function HomePage() {
     return () => window.removeEventListener("storage", handleStorageChange)
   }, [])
 
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }))
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setIsSubmitting(true)
+    setSubmitStatus("idle")
+
+    try {
+      // Create mailto link with form data
+      const subject = encodeURIComponent(formData.subject || "Contact Form Submission")
+      const body = encodeURIComponent(`
+Name: ${formData.firstName} ${formData.lastName}
+Email: ${formData.email}
+Subject: ${formData.subject}
+
+Message:
+${formData.message}
+
+---
+Sent from Ye Yint Thu's Portfolio Contact Form
+      `)
+
+      const mailtoLink = `mailto:yeyintthu.mst@gmail.com?subject=${subject}&body=${body}`
+
+      // Open email client
+      window.location.href = mailtoLink
+
+      // Reset form after a short delay
+      setTimeout(() => {
+        setFormData({
+          firstName: "",
+          lastName: "",
+          email: "",
+          subject: "",
+          message: "",
+        })
+        setSubmitStatus("success")
+        setIsSubmitting(false)
+      }, 1000)
+    } catch (error) {
+      setSubmitStatus("error")
+      setIsSubmitting(false)
+    }
+  }
+
   const getCategoryColor = (category: string) => {
     switch (category) {
       case "Web Security":
@@ -170,7 +233,14 @@ export default function HomePage() {
           <div className="max-w-4xl mx-auto text-center">
             <div className="mb-8">
               <Badge variant="secondary" className="bg-red-900/30 text-red-300 border-red-700 mb-4">
-                OSI Team Member
+                <a
+                  href="https://www.offsecinitiative.net"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-red-200 transition-colors"
+                >
+                  OSI Team Member
+                </a>
               </Badge>
               <h1 className="text-5xl md:text-7xl font-bold text-white mb-6">
                 Ye Yint Thu
@@ -182,7 +252,10 @@ export default function HomePage() {
               </p>
             </div>
             <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
-              <Button className="bg-red-600 hover:bg-red-700 text-white px-8 py-3">
+              <Button
+                onClick={() => document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" })}
+                className="bg-red-600 hover:bg-red-700 text-white px-8 py-3"
+              >
                 <Mail className="mr-2 h-4 w-4" />
                 Get In Touch
               </Button>
@@ -201,7 +274,7 @@ export default function HomePage() {
                 <Github className="h-6 w-6" />
               </a>
               <a
-                href="https://linkedin.com"
+                href="https://www.linkedin.com/in/ye-yint-thu-5a808a278/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-slate-400 hover:text-white transition-colors"
@@ -269,8 +342,17 @@ export default function HomePage() {
                   <div>
                     <h4 className="text-lg font-semibold text-white mb-3">OSI Team Member</h4>
                     <p className="text-slate-300">
-                      Proud member of the OSI (Open Security Initiative) team, collaborating on cutting-edge security
-                      research and contributing to the cybersecurity community.
+                      Proud member of the{" "}
+                      <a
+                        href="https://www.offsecinitiative.net"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-red-400 hover:text-red-300 underline"
+                      >
+                        OSI (Offensive Security Initiative)
+                      </a>{" "}
+                      team, collaborating on cutting-edge security research and contributing to the cybersecurity
+                      community.
                     </p>
                   </div>
                 </div>
@@ -285,19 +367,19 @@ export default function HomePage() {
                   </CardHeader>
                   <CardContent className="space-y-3">
                     <div className="flex justify-between items-center">
-                      <span className="text-slate-300">OSCP</span>
+                      <span className="text-slate-300">eCPPT v2</span>
                       <Badge variant="secondary" className="bg-green-900/30 text-green-300 border-green-700">
                         Certified
                       </Badge>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-slate-300">CEH</span>
+                      <span className="text-slate-300">CRTA</span>
                       <Badge variant="secondary" className="bg-green-900/30 text-green-300 border-green-700">
                         Certified
                       </Badge>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-slate-300">CISSP</span>
+                      <span className="text-slate-300">CPTS</span>
                       <Badge variant="secondary" className="bg-yellow-900/30 text-yellow-300 border-yellow-700">
                         In Progress
                       </Badge>
@@ -321,6 +403,9 @@ export default function HomePage() {
                         variant="outline"
                         size="sm"
                         className="border-slate-600 text-slate-300 hover:bg-slate-700"
+                        onClick={() =>
+                          window.open("https://app.hackthebox.com/users/1644532", "_blank", "noopener,noreferrer")
+                        }
                       >
                         <ExternalLink className="mr-2 h-4 w-4" />
                         View Profile
@@ -533,7 +618,12 @@ export default function HomePage() {
                       </div>
                       <div>
                         <p className="text-slate-300 font-medium">Email</p>
-                        <p className="text-slate-400">jrbx4@osi.com</p>
+                        <a
+                          href="mailto:yeyintthu.mst@gmail.com"
+                          className="text-slate-400 hover:text-red-400 transition-colors"
+                        >
+                          yeyintthu.mst@gmail.com
+                        </a>
                       </div>
                     </div>
                     <div className="flex items-center space-x-4">
@@ -551,7 +641,14 @@ export default function HomePage() {
                       </div>
                       <div>
                         <p className="text-slate-300 font-medium">Organization</p>
-                        <p className="text-slate-400">OSI Team Member</p>
+                        <a
+                          href="https://www.offsecinitiative.net"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-slate-400 hover:text-green-400 transition-colors"
+                        >
+                          OSI Team Member
+                        </a>
                       </div>
                     </div>
                   </div>
@@ -568,7 +665,7 @@ export default function HomePage() {
                       <Github className="h-5 w-5 text-slate-300" />
                     </a>
                     <a
-                      href="https://linkedin.com"
+                      href="https://www.linkedin.com/in/ye-yint-thu-5a808a278/"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="p-3 bg-slate-800 border border-slate-700 rounded-lg hover:bg-slate-700 transition-colors"
@@ -576,12 +673,12 @@ export default function HomePage() {
                       <Linkedin className="h-5 w-5 text-slate-300" />
                     </a>
                     <a
-                      href="https://twitter.com"
+                      href="https://app.hackthebox.com/users/1644532"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="p-3 bg-slate-800 border border-slate-700 rounded-lg hover:bg-slate-700 transition-colors"
                     >
-                      <Twitter className="h-5 w-5 text-slate-300" />
+                      <Target className="h-5 w-5 text-slate-300" />
                     </a>
                   </div>
                 </div>
@@ -594,22 +691,50 @@ export default function HomePage() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <form className="space-y-6">
+                  {submitStatus === "success" && (
+                    <div className="mb-6 p-4 bg-green-900/20 border border-green-700 rounded-md">
+                      <p className="text-green-400 text-sm">
+                        Your email client should have opened. If not, please send an email directly to{" "}
+                        <a href="mailto:yeyintthu.mst@gmail.com" className="underline">
+                          yeyintthu.mst@gmail.com
+                        </a>
+                      </p>
+                    </div>
+                  )}
+                  {submitStatus === "error" && (
+                    <div className="mb-6 p-4 bg-red-900/20 border border-red-700 rounded-md">
+                      <p className="text-red-400 text-sm">
+                        There was an error. Please send an email directly to{" "}
+                        <a href="mailto:yeyintthu.mst@gmail.com" className="underline">
+                          yeyintthu.mst@gmail.com
+                        </a>
+                      </p>
+                    </div>
+                  )}
+                  <form onSubmit={handleSubmit} className="space-y-6">
                     <div className="grid grid-cols-2 gap-4">
                       <div>
                         <label className="block text-sm font-medium text-slate-300 mb-2">First Name</label>
                         <input
                           type="text"
+                          name="firstName"
+                          value={formData.firstName}
+                          onChange={handleInputChange}
                           className="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-md text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-red-500"
                           placeholder="John"
+                          required
                         />
                       </div>
                       <div>
                         <label className="block text-sm font-medium text-slate-300 mb-2">Last Name</label>
                         <input
                           type="text"
+                          name="lastName"
+                          value={formData.lastName}
+                          onChange={handleInputChange}
                           className="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-md text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-red-500"
                           placeholder="Doe"
+                          required
                         />
                       </div>
                     </div>
@@ -617,29 +742,54 @@ export default function HomePage() {
                       <label className="block text-sm font-medium text-slate-300 mb-2">Email</label>
                       <input
                         type="email"
+                        name="email"
+                        value={formData.email}
+                        onChange={handleInputChange}
                         className="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-md text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-red-500"
                         placeholder="john@example.com"
+                        required
                       />
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-slate-300 mb-2">Subject</label>
                       <input
                         type="text"
+                        name="subject"
+                        value={formData.subject}
+                        onChange={handleInputChange}
                         className="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-md text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-red-500"
                         placeholder="Security Assessment Inquiry"
+                        required
                       />
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-slate-300 mb-2">Message</label>
                       <textarea
                         rows={4}
+                        name="message"
+                        value={formData.message}
+                        onChange={handleInputChange}
                         className="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-md text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-red-500 resize-none"
                         placeholder="Tell me about your cybersecurity needs..."
+                        required
                       />
                     </div>
-                    <Button className="w-full bg-red-600 hover:bg-red-700 text-white">
-                      <Mail className="mr-2 h-4 w-4" />
-                      Send Message
+                    <Button
+                      type="submit"
+                      disabled={isSubmitting}
+                      className="w-full bg-red-600 hover:bg-red-700 text-white disabled:opacity-50"
+                    >
+                      {isSubmitting ? (
+                        <div className="flex items-center justify-center">
+                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                          Sending...
+                        </div>
+                      ) : (
+                        <>
+                          <Send className="mr-2 h-4 w-4" />
+                          Send Message
+                        </>
+                      )}
                     </Button>
                   </form>
                 </CardContent>
