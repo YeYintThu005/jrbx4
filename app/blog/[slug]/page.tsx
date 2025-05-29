@@ -64,23 +64,24 @@ export default function BlogPostPage() {
   const slug = params.slug as string
 
   useEffect(() => {
-    // Load posts from localStorage
-    const savedPosts = localStorage.getItem("blogPosts")
-    let allPosts: BlogPost[] = []
+    // Load posts from localStorage and refresh on storage changes
+    const loadPosts = () => {
+      const savedPosts = localStorage.getItem("blogPosts")
+      let allPosts: BlogPost[] = []
 
-    if (savedPosts) {
-      allPosts = JSON.parse(savedPosts).filter((p: BlogPost) => p.status === "published")
-    } else {
-      // Default posts if none saved
-      allPosts = [
-        {
-          id: 1,
-          title: "Advanced SQL Injection Techniques in Modern Web Applications",
-          category: "Web Security",
-          status: "published",
-          date: "Dec 15, 2024",
-          views: "1.2k",
-          content: `# Advanced SQL Injection Techniques in Modern Web Applications
+      if (savedPosts) {
+        allPosts = JSON.parse(savedPosts).filter((p: BlogPost) => p.status === "published")
+      } else {
+        // Default posts if none saved
+        allPosts = [
+          {
+            id: 1,
+            title: "Advanced SQL Injection Techniques in Modern Web Applications",
+            category: "Web Security",
+            status: "published",
+            date: "Dec 15, 2024",
+            views: "1.2k",
+            content: `# Advanced SQL Injection Techniques in Modern Web Applications
 
 ## Introduction
 
@@ -130,17 +131,17 @@ Understanding these advanced SQL injection techniques is crucial for both offens
 ---
 
 *Published by Ye Yint Thu | OSI Team Member*`,
-          featuredImage: "/placeholder.svg?height=300&width=400",
-          slug: "advanced-sql-injection-techniques-in-modern-web-applications",
-        },
-        {
-          id: 2,
-          title: "Active Directory Privilege Escalation: From User to Domain Admin",
-          category: "Network Security",
-          status: "published",
-          date: "Dec 10, 2024",
-          views: "890",
-          content: `# Active Directory Privilege Escalation: From User to Domain Admin
+            featuredImage: "/placeholder.svg?height=300&width=400",
+            slug: "advanced-sql-injection-techniques-in-modern-web-applications",
+          },
+          {
+            id: 2,
+            title: "Active Directory Privilege Escalation: From User to Domain Admin",
+            category: "Network Security",
+            status: "published",
+            date: "Dec 10, 2024",
+            views: "890",
+            content: `# Active Directory Privilege Escalation: From User to Domain Admin
 
 ## Overview
 
@@ -187,17 +188,17 @@ During a recent engagement, I identified a service account with unconstrained de
 ---
 
 *Published by Ye Yint Thu | OSI Team Member*`,
-          featuredImage: "/placeholder.svg?height=300&width=400",
-          slug: "active-directory-privilege-escalation-from-user-to-domain-admin",
-        },
-        {
-          id: 3,
-          title: "HTB Machine Writeup: Exploiting Custom Binary with Buffer Overflow",
-          category: "CTF Writeup",
-          status: "published",
-          date: "Nov 28, 2024",
-          views: "654",
-          content: `# HTB Machine Writeup: Exploiting Custom Binary with Buffer Overflow
+            featuredImage: "/placeholder.svg?height=300&width=400",
+            slug: "active-directory-privilege-escalation-from-user-to-domain-admin",
+          },
+          {
+            id: 3,
+            title: "HTB Machine Writeup: Exploiting Custom Binary with Buffer Overflow",
+            category: "CTF Writeup",
+            status: "published",
+            date: "Nov 28, 2024",
+            views: "654",
+            content: `# HTB Machine Writeup: Exploiting Custom Binary with Buffer Overflow
 
 ## Machine Information
 
@@ -273,23 +274,41 @@ Once on the system, enumeration revealed a SUID binary with a path traversal vul
 ---
 
 *Published by Ye Yint Thu | OSI Team Member*`,
-          featuredImage: "/placeholder.svg?height=300&width=400",
-          slug: "htb-machine-writeup-exploiting-custom-binary-with-buffer-overflow",
-        },
-      ]
+            featuredImage: "/placeholder.svg?height=300&width=400",
+            slug: "htb-machine-writeup-exploiting-custom-binary-with-buffer-overflow",
+          },
+        ]
+      }
+
+      // Find the current post
+      const currentPost = allPosts.find((p) => p.slug === slug)
+      setPost(currentPost || null)
+
+      // Find related posts (same category, excluding current post)
+      if (currentPost) {
+        const related = allPosts
+          .filter((p) => p.category === currentPost.category && p.id !== currentPost.id)
+          .slice(0, 3)
+        setRelatedPosts(related)
+      }
+
+      setIsLoading(false)
     }
 
-    // Find the current post
-    const currentPost = allPosts.find((p) => p.slug === slug)
-    setPost(currentPost || null)
+    loadPosts()
 
-    // Find related posts (same category, excluding current post)
-    if (currentPost) {
-      const related = allPosts.filter((p) => p.category === currentPost.category && p.id !== currentPost.id).slice(0, 3)
-      setRelatedPosts(related)
+    // Listen for storage changes to update posts in real-time
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === "blogPosts") {
+        loadPosts()
+      }
     }
 
-    setIsLoading(false)
+    window.addEventListener("storage", handleStorageChange)
+
+    return () => {
+      window.removeEventListener("storage", handleStorageChange)
+    }
   }, [slug])
 
   const getCategoryColor = (category: string) => {

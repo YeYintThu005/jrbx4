@@ -25,23 +25,27 @@ export default function BlogPage() {
   const [selectedCategory, setSelectedCategory] = useState("All Categories")
 
   useEffect(() => {
-    // Load posts from localStorage
-    const savedPosts = localStorage.getItem("blogPosts")
-    if (savedPosts) {
-      const parsedPosts = JSON.parse(savedPosts)
-      // Only show published posts
-      setPosts(parsedPosts.filter((post: BlogPost) => post.status === "published"))
-    } else {
-      // Default posts if none saved
-      setPosts([
-        {
-          id: 1,
-          title: "Advanced SQL Injection Techniques in Modern Web Applications",
-          category: "Web Security",
-          status: "published",
-          date: "Dec 15, 2024",
-          views: "1.2k",
-          content: `# Advanced SQL Injection Techniques in Modern Web Applications
+    // Load posts from localStorage and refresh on storage changes
+    const loadPosts = () => {
+      const savedPosts = localStorage.getItem("blogPosts")
+      if (savedPosts) {
+        const parsedPosts = JSON.parse(savedPosts)
+        // Only show published posts, sorted by date (newest first)
+        const publishedPosts = parsedPosts
+          .filter((post: BlogPost) => post.status === "published")
+          .sort((a: BlogPost, b: BlogPost) => new Date(b.date).getTime() - new Date(a.date).getTime())
+        setPosts(publishedPosts)
+      } else {
+        // Default posts if none saved
+        setPosts([
+          {
+            id: 1,
+            title: "Advanced SQL Injection Techniques in Modern Web Applications",
+            category: "Web Security",
+            status: "published",
+            date: "Dec 15, 2024",
+            views: "1.2k",
+            content: `# Advanced SQL Injection Techniques in Modern Web Applications
 
 ## Introduction
 
@@ -91,17 +95,17 @@ Understanding these advanced SQL injection techniques is crucial for both offens
 ---
 
 *Published by Ye Yint Thu | OSI Team Member*`,
-          featuredImage: "/placeholder.svg?height=300&width=400",
-          slug: "advanced-sql-injection-techniques-in-modern-web-applications",
-        },
-        {
-          id: 2,
-          title: "Active Directory Privilege Escalation: From User to Domain Admin",
-          category: "Network Security",
-          status: "published",
-          date: "Dec 10, 2024",
-          views: "890",
-          content: `# Active Directory Privilege Escalation: From User to Domain Admin
+            featuredImage: "/placeholder.svg?height=300&width=400",
+            slug: "advanced-sql-injection-techniques-in-modern-web-applications",
+          },
+          {
+            id: 2,
+            title: "Active Directory Privilege Escalation: From User to Domain Admin",
+            category: "Network Security",
+            status: "published",
+            date: "Dec 10, 2024",
+            views: "890",
+            content: `# Active Directory Privilege Escalation: From User to Domain Admin
 
 ## Overview
 
@@ -148,17 +152,17 @@ During a recent engagement, I identified a service account with unconstrained de
 ---
 
 *Published by Ye Yint Thu | OSI Team Member*`,
-          featuredImage: "/placeholder.svg?height=300&width=400",
-          slug: "active-directory-privilege-escalation-from-user-to-domain-admin",
-        },
-        {
-          id: 3,
-          title: "HTB Machine Writeup: Exploiting Custom Binary with Buffer Overflow",
-          category: "CTF Writeup",
-          status: "published",
-          date: "Nov 28, 2024",
-          views: "654",
-          content: `# HTB Machine Writeup: Exploiting Custom Binary with Buffer Overflow
+            featuredImage: "/placeholder.svg?height=300&width=400",
+            slug: "active-directory-privilege-escalation-from-user-to-domain-admin",
+          },
+          {
+            id: 3,
+            title: "HTB Machine Writeup: Exploiting Custom Binary with Buffer Overflow",
+            category: "CTF Writeup",
+            status: "published",
+            date: "Nov 28, 2024",
+            views: "654",
+            content: `# HTB Machine Writeup: Exploiting Custom Binary with Buffer Overflow
 
 ## Machine Information
 
@@ -234,10 +238,34 @@ Once on the system, enumeration revealed a SUID binary with a path traversal vul
 ---
 
 *Published by Ye Yint Thu | OSI Team Member*`,
-          featuredImage: "/placeholder.svg?height=300&width=400",
-          slug: "htb-machine-writeup-exploiting-custom-binary-with-buffer-overflow",
-        },
-      ])
+            featuredImage: "/placeholder.svg?height=300&width=400",
+            slug: "htb-machine-writeup-exploiting-custom-binary-with-buffer-overflow",
+          },
+        ])
+      }
+    }
+
+    loadPosts()
+
+    // Listen for storage changes to update posts in real-time
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === "blogPosts") {
+        loadPosts()
+      }
+    }
+
+    window.addEventListener("storage", handleStorageChange)
+
+    // Also listen for custom events from the same tab
+    const handleCustomUpdate = () => {
+      loadPosts()
+    }
+
+    window.addEventListener("blogPostsUpdated", handleCustomUpdate)
+
+    return () => {
+      window.removeEventListener("storage", handleStorageChange)
+      window.removeEventListener("blogPostsUpdated", handleCustomUpdate)
     }
   }, [])
 

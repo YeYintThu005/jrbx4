@@ -84,6 +84,8 @@ export default function BlogUploadPage() {
       views: "1.2k",
       content:
         "# Advanced SQL Injection Techniques\n\nSQL injection remains one of the most critical vulnerabilities...",
+      featuredImage: "/placeholder.svg?height=300&width=400",
+      slug: "advanced-sql-injection-techniques",
     },
     {
       id: 2,
@@ -94,6 +96,8 @@ export default function BlogUploadPage() {
       views: "890",
       content:
         "# Active Directory Privilege Escalation\n\nThis guide covers common AD privilege escalation techniques...",
+      featuredImage: "/placeholder.svg?height=300&width=400",
+      slug: "active-directory-privilege-escalation",
     },
     {
       id: 3,
@@ -103,6 +107,8 @@ export default function BlogUploadPage() {
       date: "Nov 28, 2024",
       views: "654",
       content: "# HTB Machine Writeup: Buffer Overflow\n\nStep-by-step walkthrough of exploiting a custom binary...",
+      featuredImage: "/placeholder.svg?height=300&width=400",
+      slug: "htb-machine-writeup-buffer-overflow",
     },
     {
       id: 4,
@@ -112,6 +118,8 @@ export default function BlogUploadPage() {
       date: "Draft",
       views: "0",
       content: "# Zero-Day Discovery Methodology\n\nMethodology and tools for discovering zero-day vulnerabilities...",
+      featuredImage: "/placeholder.svg?height=300&width=400",
+      slug: "zero-day-discovery-methodology",
     },
   ])
   const [uploadedImages, setUploadedImages] = useState<string[]>([
@@ -176,7 +184,7 @@ export default function BlogUploadPage() {
     const updatedPosts = [newPost, ...posts]
     setPosts(updatedPosts)
 
-    // Save to localStorage so it persists
+    // Save to localStorage so it persists across all pages
     localStorage.setItem("blogPosts", JSON.stringify(updatedPosts))
 
     // Reset form
@@ -191,7 +199,12 @@ export default function BlogUploadPage() {
 
   const handleDeletePost = (id: number) => {
     if (confirm("Are you sure you want to delete this post?")) {
-      setPosts(posts.filter((post) => post.id !== id))
+      const updatedPosts = posts.filter((post) => post.id !== id)
+      setPosts(updatedPosts)
+
+      // Update localStorage to sync across all pages
+      localStorage.setItem("blogPosts", JSON.stringify(updatedPosts))
+
       alert("Post deleted successfully!")
     }
   }
@@ -201,8 +214,12 @@ export default function BlogUploadPage() {
     setPostCategory(post.category)
     setMarkdownContent(post.content)
     setPostStatus(post.status)
+    setFeaturedImage(post.featuredImage || "")
+
     // Remove the post from the list since we're editing it
-    setPosts(posts.filter((p) => p.id !== post.id))
+    const updatedPosts = posts.filter((p) => p.id !== post.id)
+    setPosts(updatedPosts)
+    localStorage.setItem("blogPosts", JSON.stringify(updatedPosts))
   }
 
   const handleChangePassword = () => {
@@ -280,7 +297,28 @@ export default function BlogUploadPage() {
 
   const insertImageIntoContent = (imageUrl: string) => {
     const imageMarkdown = `![Image description](${imageUrl})\n\n`
-    setMarkdownContent((prev) => prev + imageMarkdown)
+
+    // Get the current cursor position in the textarea
+    const textarea = document.querySelector("textarea") as HTMLTextAreaElement
+    if (textarea) {
+      const start = textarea.selectionStart
+      const end = textarea.selectionEnd
+      const currentContent = markdownContent || ""
+
+      // Insert the image markdown at the cursor position
+      const newContent = currentContent.substring(0, start) + imageMarkdown + currentContent.substring(end)
+      setMarkdownContent(newContent)
+
+      // Set focus back to textarea and position cursor after inserted text
+      setTimeout(() => {
+        textarea.focus()
+        textarea.setSelectionRange(start + imageMarkdown.length, start + imageMarkdown.length)
+      }, 0)
+    } else {
+      // Fallback: append to end if textarea not found
+      setMarkdownContent((prev) => (prev || "") + imageMarkdown)
+    }
+
     alert("Image inserted into content!")
   }
 
@@ -482,7 +520,7 @@ Understanding these techniques helps security professionals better defend agains
               <Card className="bg-slate-800/50 border-slate-700">
                 <CardContent className="p-6 text-center">
                   <ImageIcon className="h-8 w-8 text-purple-500 mx-auto mb-2" />
-                  <p className="text-2xl font-bold text-white">45</p>
+                  <p className="text-2xl font-bold text-white">{uploadedImages.length}</p>
                   <p className="text-sm text-slate-400">Media Files</p>
                 </CardContent>
               </Card>
@@ -661,6 +699,7 @@ Understanding these techniques helps security professionals better defend agains
                         setPostCategory("")
                         setMarkdownContent("")
                         setPostStatus("draft")
+                        setFeaturedImage("")
                       }}
                       variant="outline"
                       className="border-slate-600 text-slate-300 hover:bg-slate-700"
