@@ -225,22 +225,6 @@ export default function LoginPage() {
                 </Button>
               </form>
 
-              {/* Demo Credentials */}
-              <div className="mt-6 p-4 bg-red-900/20 rounded-lg border border-red-700/30 backdrop-blur-sm">
-                <h4 className="text-sm font-medium text-red-300 mb-2 flex items-center">
-                  <Wifi className="mr-2 h-3 w-3" />
-                  Elite Credentials:
-                </h4>
-                <div className="space-y-1 text-xs text-gray-400">
-                  <p>
-                    <span className="font-medium text-red-400">Email:</span> jrbx4@osi.com
-                  </p>
-                  <p>
-                    <span className="font-medium text-red-400">Code:</span> OSI_SecureAdmin_2024_jrBX4!
-                  </p>
-                </div>
-              </div>
-
               {/* Security Notice */}
               <div className="mt-4 text-center">
                 <p className="text-xs text-gray-500">
