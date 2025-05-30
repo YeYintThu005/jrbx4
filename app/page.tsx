@@ -697,7 +697,7 @@ Sent from Ye Yint Thu's Portfolio Contact Form
               {experiences.map((exp, index) => (
                 <Card
                   key={exp.id}
-                  className="bg-black/50 border border-red-900/30 hover:border-red-500/40 transition-all shadow-lg backdrop-blur-sm"
+                  className="bg-black/50 border border-red-900/30 backdrop-blur-sm shadow-lg shadow-red-500/10"
                 >
                   <CardContent className="p-6">
                     <div className="flex items-start justify-between">
@@ -746,7 +746,7 @@ Sent from Ye Yint Thu's Portfolio Contact Form
             <div className="grid md:grid-cols-3 gap-8">
               <Card className="group bg-gradient-to-br from-gray-900/80 to-red-900/20 border border-red-700/30 hover:border-red-500/40 transition-all duration-300 shadow-lg backdrop-blur-sm">
                 <CardHeader>
-                  <div className="p-4 bg-red-600/20 rounded-lg w-fit group-hover:bg-red-500/30 transition-colors border border-red-500/30">
+                  <div className="bg-black/50 border border-red-900/30 backdrop-blur-sm shadow-lg shadow-red-500/10">
                     <Target className="h-6 w-6 text-red-400" />
                   </div>
                   <CardTitle className="text-xl text-white">Elite Penetration Testing</CardTitle>
@@ -774,7 +774,7 @@ Sent from Ye Yint Thu's Portfolio Contact Form
 
               <Card className="group bg-gradient-to-br from-gray-900/80 to-red-900/20 border border-red-700/30 hover:border-red-500/40 transition-all duration-300 shadow-lg backdrop-blur-sm">
                 <CardHeader>
-                  <div className="p-4 bg-red-600/20 rounded-lg w-fit group-hover:bg-red-500/30 transition-colors border border-red-500/30">
+                  <div className="bg-black/50 border border-red-900/30 backdrop-blur-sm shadow-lg shadow-red-500/10">
                     <Search className="h-6 w-6 text-red-400" />
                   </div>
                   <CardTitle className="text-xl text-white">Zero-Day Research</CardTitle>
@@ -802,7 +802,7 @@ Sent from Ye Yint Thu's Portfolio Contact Form
 
               <Card className="group bg-gradient-to-br from-gray-900/80 to-red-900/20 border border-red-700/30 hover:border-red-500/40 transition-all duration-300 shadow-lg backdrop-blur-sm">
                 <CardHeader>
-                  <div className="p-4 bg-red-600/20 rounded-lg w-fit group-hover:bg-red-500/30 transition-colors border border-red-500/30">
+                  <div className="bg-black/50 border border-red-900/30 backdrop-blur-sm shadow-lg shadow-red-500/10">
                     <Lock className="h-6 w-6 text-red-400" />
                   </div>
                   <CardTitle className="text-xl text-white">Security Architecture</CardTitle>
@@ -839,7 +839,7 @@ Sent from Ye Yint Thu's Portfolio Contact Form
             <div className="text-center mb-20">
               <h2 className="text-4xl font-bold mb-6">
                 <span className="text-white">Elite</span>
-                <span className="bg-gradient-to-r from-red-500 to-red-700 bg-clip-text text-transparent">
+                <span className="bg-black/50 border border-red-900/30 backdrop-blur-sm shadow-lg shadow-red-500/10">
                   {" "}
                   Intelligence
                 </span>
@@ -853,7 +853,7 @@ Sent from Ye Yint Thu's Portfolio Contact Form
                 {posts.map((post) => (
                   <Card
                     key={post.id}
-                    className="group bg-gradient-to-br from-gray-900/80 to-red-900/20 border border-red-700/30 hover:border-red-500/40 transition-all duration-300 overflow-hidden shadow-lg backdrop-blur-sm"
+                    className="bg-black/50 border border-red-900/30 backdrop-blur-sm shadow-lg shadow-red-500/10"
                   >
                     <div className="aspect-video overflow-hidden">
                       <img
@@ -984,7 +984,7 @@ Sent from Ye Yint Thu's Portfolio Contact Form
                       href="https://github.com"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="p-4 bg-gray-900/50 border border-gray-700 rounded-lg hover:bg-red-500/10 hover:border-red-500/30 transition-all group"
+                      className="bg-black/50 border border-red-900/30 backdrop-blur-sm shadow-lg shadow-red-500/10"
                     >
                       <Github className="h-6 w-6 text-gray-400 group-hover:text-red-400" />
                     </a>
@@ -992,7 +992,7 @@ Sent from Ye Yint Thu's Portfolio Contact Form
                       href="https://www.linkedin.com/in/ye-yint-thu-5a808a278/"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="p-4 bg-gray-900/50 border border-gray-700 rounded-lg hover:bg-red-500/10 hover:border-red-500/30 transition-all group"
+                      className="bg-black/50 border border-red-900/30 backdrop-blur-sm shadow-lg shadow-red-500/10"
                     >
                       <Linkedin className="h-6 w-6 text-gray-400 group-hover:text-red-400" />
                     </a>
@@ -1000,14 +1000,14 @@ Sent from Ye Yint Thu's Portfolio Contact Form
                       href="https://app.hackthebox.com/users/1644532"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="p-4 bg-gray-900/50 border border-gray-700 rounded-lg hover:bg-red-500/10 hover:border-red-500/30 transition-all group"
+                      className="bg-black/50 border border-red-900/30 backdrop-blur-sm shadow-lg shadow-red-500/10"
                     >
                       <Target className="h-6 w-6 text-gray-400 group-hover:text-red-400" />
                     </a>
                   </div>
                 </div>
               </div>
-              <Card className="bg-gradient-to-br from-gray-900/80 to-red-900/20 border border-red-700/30 shadow-lg backdrop-blur-sm">
+              <Card className="bg-black/50 border border-red-900/30 backdrop-blur-sm shadow-lg shadow-red-500/10">
                 <CardHeader>
                   <CardTitle className="text-2xl text-white">Secure Communication</CardTitle>
                   <CardDescription className="text-gray-400">
