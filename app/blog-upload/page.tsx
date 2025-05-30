@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import {
-  Shield,
   Edit,
   Upload,
   Save,
@@ -16,7 +15,6 @@ import {
   Trash2,
   ImageIcon,
   Plus,
-  BarChart3,
   LogOut,
   Code,
   Settings,
@@ -25,9 +23,30 @@ import {
   FolderOpen,
   Download,
   File,
+  Terminal,
+  Award,
+  Briefcase,
+  Shield,
+  Target,
 } from "lucide-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
+
+interface Certification {
+  id: number
+  name: string
+  status: "certified" | "in-progress" | "planned"
+  date?: string
+}
+
+interface Experience {
+  id: number
+  title: string
+  company: string
+  period: string
+  description: string
+  current: boolean
+}
 
 // Simple markdown to HTML converter for preview
 const markdownToHtml = (markdown: string): string => {
@@ -35,7 +54,7 @@ const markdownToHtml = (markdown: string): string => {
     // Images
     .replace(
       /!\[([^\]]*)\]$$([^)]+)$$/g,
-      '<img src="$2" alt="$1" class="w-full max-w-md mx-auto rounded-lg border border-gray-600 my-4" />',
+      '<img src="$2" alt="$1" class="w-full max-w-md mx-auto rounded-lg border border-red-600 my-4" />',
     )
     // Headers
     .replace(/^### (.*$)/gim, '<h3 class="text-lg font-semibold text-white mb-2">$1</h3>')
@@ -47,22 +66,22 @@ const markdownToHtml = (markdown: string): string => {
     // Code blocks
     .replace(
       /```(\w+)?\n([\s\S]*?)```/g,
-      '<pre class="bg-gray-800 p-4 rounded-lg border border-gray-600 my-4 overflow-x-auto"><code class="text-green-400 text-sm">$2</code></pre>',
+      '<pre class="bg-gray-900 p-4 rounded-lg border border-red-600 my-4 overflow-x-auto"><code class="text-red-400 text-sm">$2</code></pre>',
     )
     // Inline code
-    .replace(/`(.*?)`/g, '<code class="bg-gray-700 px-2 py-1 rounded text-red-400 text-sm">$1</code>')
+    .replace(/`(.*?)`/g, '<code class="bg-gray-800 px-2 py-1 rounded text-red-400 text-sm">$1</code>')
     // Links
     .replace(
       /\[([^\]]+)\]$$([^)]+)$$/g,
       '<a href="$2" class="text-red-400 hover:text-red-300 underline" target="_blank">$1</a>',
     )
-    // Line breaks
-    .replace(/\n\n/g, '</p><p class="text-gray-300 mb-4">')
-    .replace(/\n/g, "<br>")
     // Lists
-    .replace(/^- (.*$)/gim, '<li class="text-gray-300 mb-1">• $1</li>')
+    .replace(/^- (.*$)/gim, '<li class="text-gray-300 mb-2 ml-4">• $1</li>')
+    // Paragraphs
+    .replace(/\n\n/g, '</p><p class="text-gray-300 mb-4 leading-relaxed">')
+    .replace(/\n/g, "<br>")
 
-  return `<div class="prose prose-invert max-w-none"><p class="text-gray-300 mb-4">${html}</p></div>`
+  return `<div class="prose prose-invert max-w-none"><p class="text-gray-300 mb-4 leading-relaxed">${html}</p></div>`
 }
 
 export default function BlogUploadPage() {
@@ -78,66 +97,26 @@ export default function BlogUploadPage() {
   const [newPassword, setNewPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
   const [passwordError, setPasswordError] = useState("")
-  const [posts, setPosts] = useState([
-    {
-      id: 1,
-      title: "Advanced SQL Injection Techniques",
-      category: "Web Security",
-      status: "published",
-      date: "Dec 15, 2024",
-      views: "1.2k",
-      content:
-        "# Advanced SQL Injection Techniques\n\nSQL injection remains one of the most critical vulnerabilities...",
-      featuredImage: "/placeholder.svg?height=300&width=400",
-      slug: "advanced-sql-injection-techniques",
-    },
-    {
-      id: 2,
-      title: "Active Directory Privilege Escalation",
-      category: "Network Security",
-      status: "published",
-      date: "Dec 10, 2024",
-      views: "890",
-      content:
-        "# Active Directory Privilege Escalation\n\nThis guide covers common AD privilege escalation techniques...",
-      featuredImage: "/placeholder.svg?height=300&width=400",
-      slug: "active-directory-privilege-escalation",
-    },
-    {
-      id: 3,
-      title: "HTB Machine Writeup: Buffer Overflow",
-      category: "CTF Writeup",
-      status: "published",
-      date: "Nov 28, 2024",
-      views: "654",
-      content: "# HTB Machine Writeup: Buffer Overflow\n\nStep-by-step walkthrough of exploiting a custom binary...",
-      featuredImage: "/placeholder.svg?height=300&width=400",
-      slug: "htb-machine-writeup-buffer-overflow",
-    },
-    {
-      id: 4,
-      title: "Zero-Day Discovery Methodology",
-      category: "Research",
-      status: "draft",
-      date: "Draft",
-      views: "0",
-      content: "# Zero-Day Discovery Methodology\n\nMethodology and tools for discovering zero-day vulnerabilities...",
-      featuredImage: "/placeholder.svg?height=300&width=400",
-      slug: "zero-day-discovery-methodology",
-    },
-  ])
-  const [uploadedImages, setUploadedImages] = useState<string[]>([
-    "/placeholder.svg?height=150&width=150",
-    "/placeholder.svg?height=150&width=150",
-    "/placeholder.svg?height=150&width=150",
-    "/placeholder.svg?height=150&width=150",
-    "/placeholder.svg?height=150&width=150",
-  ])
+  const [posts, setPosts] = useState([])
+  const [uploadedImages, setUploadedImages] = useState<string[]>([])
   const [featuredImage, setFeaturedImage] = useState<string>("")
   const [isUploading, setIsUploading] = useState(false)
   const [profileImage, setProfileImage] = useState<string>("")
   const [resumeFile, setResumeFile] = useState<string>("")
   const [resumeFileName, setResumeFileName] = useState<string>("")
+
+  // New state for certifications and experiences
+  const [certifications, setCertifications] = useState<Certification[]>([])
+  const [experiences, setExperiences] = useState<Experience[]>([])
+  const [newCertification, setNewCertification] = useState({ name: "", status: "certified" as const, date: "" })
+  const [newExperience, setNewExperience] = useState({
+    title: "",
+    company: "",
+    period: "",
+    description: "",
+    current: false,
+  })
+
   const router = useRouter()
 
   useEffect(() => {
@@ -146,24 +125,57 @@ export default function BlogUploadPage() {
     if (authToken) {
       setIsAuthenticated(true)
 
-      // Load saved posts from localStorage
+      // Load all data from localStorage
       const savedPosts = localStorage.getItem("blogPosts")
       if (savedPosts) {
         setPosts(JSON.parse(savedPosts))
       }
 
-      // Load saved profile image
       const savedProfileImage = localStorage.getItem("profileImage")
       if (savedProfileImage) {
         setProfileImage(savedProfileImage)
       }
 
-      // Load saved resume
       const savedResume = localStorage.getItem("resumeFile")
       const savedResumeFileName = localStorage.getItem("resumeFileName")
       if (savedResume && savedResumeFileName) {
         setResumeFile(savedResume)
         setResumeFileName(savedResumeFileName)
+      }
+
+      const savedCertifications = localStorage.getItem("certifications")
+      if (savedCertifications) {
+        setCertifications(JSON.parse(savedCertifications))
+      } else {
+        setCertifications([
+          { id: 1, name: "eCPPT v2", status: "certified", date: "2024" },
+          { id: 2, name: "CRTA", status: "certified", date: "2024" },
+          { id: 3, name: "CPTS", status: "in-progress" },
+        ])
+      }
+
+      const savedExperiences = localStorage.getItem("experiences")
+      if (savedExperiences) {
+        setExperiences(JSON.parse(savedExperiences))
+      } else {
+        setExperiences([
+          {
+            id: 1,
+            title: "Elite Penetration Tester",
+            company: "OSI Team",
+            period: "2023 - Present",
+            description: "Conducting advanced security assessments and elite vulnerability research",
+            current: true,
+          },
+          {
+            id: 2,
+            title: "Security Researcher",
+            company: "Independent Operations",
+            period: "2022 - 2023",
+            description: "Elite bug bounty hunting and advanced security research",
+            current: false,
+          },
+        ])
       }
     } else {
       router.push("/login")
@@ -184,7 +196,7 @@ export default function BlogUploadPage() {
     }
 
     const newPost = {
-      id: Date.now(), // Use timestamp for unique ID
+      id: Date.now(),
       title: postTitle,
       category: postCategory || "General",
       status: postStatus,
@@ -220,12 +232,9 @@ export default function BlogUploadPage() {
 
   const handleDeletePost = (id: number) => {
     if (confirm("Are you sure you want to delete this post?")) {
-      const updatedPosts = posts.filter((post) => post.id !== id)
+      const updatedPosts = posts.filter((post: any) => post.id !== id)
       setPosts(updatedPosts)
-
-      // Update localStorage to sync across all pages
       localStorage.setItem("blogPosts", JSON.stringify(updatedPosts))
-
       alert("Post deleted successfully!")
     }
   }
@@ -237,8 +246,7 @@ export default function BlogUploadPage() {
     setPostStatus(post.status)
     setFeaturedImage(post.featuredImage || "")
 
-    // Remove the post from the list since we're editing it
-    const updatedPosts = posts.filter((p) => p.id !== post.id)
+    const updatedPosts = posts.filter((p: any) => p.id !== post.id)
     setPosts(updatedPosts)
     localStorage.setItem("blogPosts", JSON.stringify(updatedPosts))
   }
@@ -261,7 +269,6 @@ export default function BlogUploadPage() {
       return
     }
 
-    // In production, this would update the password on the server
     alert("Password changed successfully!")
     setShowChangePassword(false)
     setCurrentPassword("")
@@ -273,13 +280,11 @@ export default function BlogUploadPage() {
     const file = event.target.files?.[0]
     if (!file) return
 
-    // Validate file type
     if (!file.type.startsWith("image/")) {
       alert("Please select a valid image file")
       return
     }
 
-    // Validate file size (max 5MB)
     if (file.size > 5 * 1024 * 1024) {
       alert("Image size must be less than 5MB")
       return
@@ -288,7 +293,6 @@ export default function BlogUploadPage() {
     setIsUploading(true)
 
     try {
-      // Create a data URL for the image
       const reader = new FileReader()
       reader.onload = (e) => {
         const imageUrl = e.target?.result as string
@@ -313,13 +317,11 @@ export default function BlogUploadPage() {
     const file = event.target.files?.[0]
     if (!file) return
 
-    // Validate file type
     if (!file.type.startsWith("image/")) {
       alert("Please select a valid image file")
       return
     }
 
-    // Validate file size (max 5MB)
     if (file.size > 5 * 1024 * 1024) {
       alert("Image size must be less than 5MB")
       return
@@ -347,13 +349,11 @@ export default function BlogUploadPage() {
     const file = event.target.files?.[0]
     if (!file) return
 
-    // Validate file type (PDF only)
     if (file.type !== "application/pdf") {
       alert("Please select a PDF file")
       return
     }
 
-    // Validate file size (max 10MB)
     if (file.size > 10 * 1024 * 1024) {
       alert("File size must be less than 10MB")
       return
@@ -389,24 +389,20 @@ export default function BlogUploadPage() {
   const insertImageIntoContent = (imageUrl: string) => {
     const imageMarkdown = `![Image description](${imageUrl})\n\n`
 
-    // Get the current cursor position in the textarea
     const textarea = document.querySelector("textarea") as HTMLTextAreaElement
     if (textarea) {
       const start = textarea.selectionStart
       const end = textarea.selectionEnd
       const currentContent = markdownContent || ""
 
-      // Insert the image markdown at the cursor position
       const newContent = currentContent.substring(0, start) + imageMarkdown + currentContent.substring(end)
       setMarkdownContent(newContent)
 
-      // Set focus back to textarea and position cursor after inserted text
       setTimeout(() => {
         textarea.focus()
         textarea.setSelectionRange(start + imageMarkdown.length, start + imageMarkdown.length)
       }, 0)
     } else {
-      // Fallback: append to end if textarea not found
       setMarkdownContent((prev) => (prev || "") + imageMarkdown)
     }
 
@@ -424,45 +420,132 @@ export default function BlogUploadPage() {
     }
   }
 
+  // Certification management functions
+  const handleAddCertification = () => {
+    if (!newCertification.name.trim()) {
+      alert("Please enter a certification name")
+      return
+    }
+
+    const certification: Certification = {
+      id: Date.now(),
+      name: newCertification.name,
+      status: newCertification.status,
+      date: newCertification.date || undefined,
+    }
+
+    const updatedCertifications = [...certifications, certification]
+    setCertifications(updatedCertifications)
+    localStorage.setItem("certifications", JSON.stringify(updatedCertifications))
+
+    setNewCertification({ name: "", status: "certified", date: "" })
+    alert("Certification added successfully!")
+  }
+
+  const handleDeleteCertification = (id: number) => {
+    if (confirm("Are you sure you want to delete this certification?")) {
+      const updatedCertifications = certifications.filter((cert) => cert.id !== id)
+      setCertifications(updatedCertifications)
+      localStorage.setItem("certifications", JSON.stringify(updatedCertifications))
+      alert("Certification deleted successfully!")
+    }
+  }
+
+  // Experience management functions
+  const handleAddExperience = () => {
+    if (!newExperience.title.trim() || !newExperience.company.trim()) {
+      alert("Please fill in the title and company")
+      return
+    }
+
+    const experience: Experience = {
+      id: Date.now(),
+      title: newExperience.title,
+      company: newExperience.company,
+      period: newExperience.period,
+      description: newExperience.description,
+      current: newExperience.current,
+    }
+
+    const updatedExperiences = [...experiences, experience]
+    setExperiences(updatedExperiences)
+    localStorage.setItem("experiences", JSON.stringify(updatedExperiences))
+
+    setNewExperience({
+      title: "",
+      company: "",
+      period: "",
+      description: "",
+      current: false,
+    })
+    alert("Experience added successfully!")
+  }
+
+  const handleDeleteExperience = (id: number) => {
+    if (confirm("Are you sure you want to delete this experience?")) {
+      const updatedExperiences = experiences.filter((exp) => exp.id !== id)
+      setExperiences(updatedExperiences)
+      localStorage.setItem("experiences", JSON.stringify(updatedExperiences))
+      alert("Experience deleted successfully!")
+    }
+  }
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case "certified":
+        return "bg-red-500/20 text-red-300 border-red-500/30"
+      case "in-progress":
+        return "bg-yellow-500/20 text-yellow-300 border-yellow-500/30"
+      case "planned":
+        return "bg-gray-500/20 text-gray-300 border-gray-500/30"
+      default:
+        return "bg-gray-500/20 text-gray-300 border-gray-500/30"
+    }
+  }
+
   // Sample markdown content
-  const sampleMarkdown = `# Advanced SQL Injection Techniques
+  const sampleMarkdown = `# Advanced Penetration Testing Techniques
 
 ## Introduction
 
-SQL injection remains one of the most critical vulnerabilities in web applications. This article explores advanced techniques used in modern penetration testing.
+Elite penetration testing requires mastery of advanced techniques and cutting-edge methodologies. This guide explores sophisticated attack vectors used in modern security assessments.
 
 ## Key Techniques
 
-### 1. Union-Based Injection
+### 1. Advanced SQL Injection
 
 \`\`\`sql
 ' UNION SELECT 1,2,3,database(),5-- -
 \`\`\`
 
-### 2. Boolean-Based Blind Injection
+### 2. Elite Buffer Overflow Exploitation
 
-\`\`\`sql
-' AND (SELECT SUBSTRING(@@version,1,1))='5'-- -
+\`\`\`python
+payload = "A" * 512 + struct.pack("<I", 0xdeadbeef)
 \`\`\`
 
-## Tools Used
+### 3. Zero-Day Discovery
 
-- **Burp Suite**: For intercepting requests
-- **SQLMap**: Automated SQL injection tool
-- **Custom Scripts**: Python-based payloads
+Advanced fuzzing and reverse engineering techniques for discovering previously unknown vulnerabilities.
+
+## Elite Tools
+
+- **Custom Exploits**: Proprietary tools for advanced assessments
+- **Zero-Day Arsenal**: Collection of undisclosed vulnerabilities
+- **Advanced Payloads**: Sophisticated evasion techniques
 
 ## Conclusion
 
-Understanding these techniques helps security professionals better defend against SQL injection attacks.
+Elite penetration testing requires continuous learning and adaptation to emerging threats and defensive technologies.
 
 ---
 
-*Published by Ye Yint Thu | OSI Team Member*`
+*Published by jrBX4 | Elite OSI Operative*`
 
   if (isLoading) {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center">
-        <div className="text-white">Loading...</div>
+        <div className="text-white">Loading elite systems...</div>
       </div>
     )
   }
@@ -475,37 +558,67 @@ Understanding these techniques helps security professionals better defend agains
     <div className="min-h-screen bg-black text-white">
       {/* Animated Background */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute inset-0 bg-gradient-to-br from-red-900/5 via-black to-blue-900/5"></div>
+        {/* Floating particles */}
+        <div className="absolute inset-0">
+          {[...Array(20)].map((_, i) => (
+            <div
+              key={i}
+              className="absolute w-1 h-1 bg-red-400/40 rounded-full animate-pulse"
+              style={{
+                left: `${Math.random() * 100}%`,
+                top: `${Math.random() * 100}%`,
+                animationDelay: `${Math.random() * 3}s`,
+                animationDuration: `${3 + Math.random() * 2}s`,
+              }}
+            />
+          ))}
+        </div>
+
+        {/* Moving gradient orbs */}
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-gradient-to-r from-red-600/10 to-red-800/10 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-gradient-to-r from-red-500/5 to-red-700/5 rounded-full blur-3xl animate-pulse delay-1000"></div>
       </div>
 
       {/* Header */}
-      <header className="relative z-50 border-b border-gray-800/50 bg-black/80 backdrop-blur-xl sticky top-0">
+      <header className="relative z-50 border-b border-red-900/30 bg-black/90 backdrop-blur-xl sticky top-0">
         <div className="container mx-auto px-6 py-4">
           <nav className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <div className="relative">
-                <Shield className="h-10 w-10 text-red-500" />
-                <div className="absolute inset-0 bg-red-500/20 rounded-full blur-lg"></div>
+            <div className="flex items-center space-x-4">
+              {/* Elite jrBX4 Logo */}
+              <div className="relative group">
+                <div className="flex items-center space-x-3 p-3 bg-gradient-to-r from-red-900/40 to-black/60 rounded-lg border border-red-600/40 shadow-lg">
+                  <div className="relative">
+                    <Terminal className="h-8 w-8 text-red-400" />
+                    <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
+                  </div>
+                  <div className="font-mono">
+                    <div className="text-lg font-bold bg-gradient-to-r from-red-400 to-red-600 bg-clip-text text-transparent">
+                      jrBX4
+                    </div>
+                    <div className="text-xs text-red-400">ELITE ADMIN</div>
+                  </div>
+                </div>
+                <div className="absolute inset-0 bg-gradient-to-r from-red-500/10 to-red-600/10 rounded-lg blur-lg group-hover:blur-xl transition-all"></div>
               </div>
               <div>
-                <span className="text-2xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
+                <span className="text-2xl font-bold bg-gradient-to-r from-white to-red-200 bg-clip-text text-transparent">
                   Ye Yint Thu
                 </span>
-                <div className="text-xs text-red-400 font-medium">ADMIN PANEL</div>
+                <div className="text-xs text-red-400 font-mono">ELITE CONTROL PANEL</div>
               </div>
             </div>
             <div className="flex items-center space-x-6">
-              <Link href="/" className="text-gray-300 hover:text-white transition-colors">
+              <Link href="/" className="text-gray-300 hover:text-red-400 transition-colors">
                 Home
               </Link>
-              <Link href="/blog" className="text-gray-300 hover:text-white transition-colors">
+              <Link href="/blog" className="text-gray-300 hover:text-red-400 transition-colors">
                 Blog
               </Link>
               <Button
                 onClick={() => setShowChangePassword(true)}
                 variant="outline"
                 size="sm"
-                className="border-gray-700 text-gray-300 hover:bg-gray-800"
+                className="border-red-500/50 text-red-400 hover:bg-red-500/10"
               >
                 <Settings className="mr-2 h-4 w-4" />
                 Settings
@@ -514,7 +627,7 @@ Understanding these techniques helps security professionals better defend agains
                 onClick={handleLogout}
                 variant="outline"
                 size="sm"
-                className="border-gray-700 text-gray-300 hover:bg-gray-800"
+                className="border-red-500/50 text-red-400 hover:bg-red-500/10"
               >
                 <LogOut className="mr-2 h-4 w-4" />
                 Logout
@@ -527,58 +640,61 @@ Understanding these techniques helps security professionals better defend agains
       {/* Change Password Modal */}
       {showChangePassword && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <Card className="bg-gray-900/90 border-gray-800 w-full max-w-md backdrop-blur-xl">
+          <Card className="bg-gradient-to-br from-gray-900/90 to-red-900/50 border-red-500/30 w-full max-w-md backdrop-blur-xl">
             <CardHeader>
               <CardTitle className="text-white flex items-center">
                 <Key className="mr-2 h-5 w-5" />
-                Change Password
+                Change Access Code
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               {passwordError && (
-                <div className="p-3 bg-red-500/10 border border-red-500/20 rounded-xl">
+                <div className="p-3 bg-red-500/20 border border-red-500/30 rounded-lg">
                   <p className="text-red-400 text-sm">{passwordError}</p>
                 </div>
               )}
 
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">Current Password</label>
+                <label className="block text-sm font-medium text-gray-300 mb-2">Current Access Code</label>
                 <input
                   type="password"
                   value={currentPassword}
                   onChange={(e) => setCurrentPassword(e.target.value)}
-                  className="w-full px-4 py-3 bg-gray-900/50 border border-gray-800 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-red-500"
+                  className="w-full px-4 py-3 bg-gray-900/50 border border-red-500/30 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-red-500 backdrop-blur-sm"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">New Password</label>
+                <label className="block text-sm font-medium text-gray-300 mb-2">New Access Code</label>
                 <input
                   type="password"
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
-                  className="w-full px-4 py-3 bg-gray-900/50 border border-gray-800 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-red-500"
+                  className="w-full px-4 py-3 bg-gray-900/50 border border-red-500/30 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-red-500 backdrop-blur-sm"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">Confirm New Password</label>
+                <label className="block text-sm font-medium text-gray-300 mb-2">Confirm New Access Code</label>
                 <input
                   type="password"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="w-full px-4 py-3 bg-gray-900/50 border border-gray-800 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-red-500"
+                  className="w-full px-4 py-3 bg-gray-900/50 border border-red-500/30 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-red-500 backdrop-blur-sm"
                 />
               </div>
 
               <div className="flex space-x-3">
-                <Button onClick={handleChangePassword} className="bg-red-600 hover:bg-red-700 text-white flex-1">
-                  Change Password
+                <Button
+                  onClick={handleChangePassword}
+                  className="bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white flex-1 border-0"
+                >
+                  Update Code
                 </Button>
                 <Button
                   onClick={() => setShowChangePassword(false)}
                   variant="outline"
-                  className="border-gray-700 text-gray-300 hover:bg-gray-800"
+                  className="border-red-500/50 text-red-400 hover:bg-red-500/10"
                 >
                   Cancel
                 </Button>
@@ -592,12 +708,14 @@ Understanding these techniques helps security professionals better defend agains
       <section className="relative py-20 px-6">
         <div className="container mx-auto">
           <div className="max-w-4xl mx-auto text-center">
-            <h1 className="text-5xl md:text-7xl font-bold mb-6">
-              <span className="bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">Blog</span>
-              <span className="text-red-500 block">Administration</span>
+            <h1 className="text-6xl md:text-8xl font-bold mb-6">
+              <span className="bg-gradient-to-r from-red-400 via-red-500 to-red-600 bg-clip-text text-transparent">
+                Elite
+              </span>
+              <span className="text-white block">Command</span>
             </h1>
             <p className="text-xl text-gray-400 mb-8 max-w-2xl mx-auto">
-              Create, manage, and publish your cybersecurity insights with advanced tools and media management.
+              Advanced control center for elite operations, content management, and tactical intelligence.
             </p>
           </div>
         </div>
@@ -608,32 +726,32 @@ Understanding these techniques helps security professionals better defend agains
         <div className="container mx-auto">
           <div className="max-w-6xl mx-auto">
             <div className="grid md:grid-cols-4 gap-6">
-              <Card className="bg-gradient-to-br from-gray-900/50 to-black/50 backdrop-blur-xl border-gray-800/50">
+              <Card className="bg-gradient-to-br from-gray-900/50 to-red-900/30 backdrop-blur-xl border-red-500/30">
                 <CardContent className="p-6 text-center">
                   <FileText className="h-8 w-8 text-red-500 mx-auto mb-2" />
                   <p className="text-2xl font-bold text-white">{posts.length}</p>
-                  <p className="text-sm text-gray-400">Total Posts</p>
+                  <p className="text-sm text-gray-400">Intel Reports</p>
                 </CardContent>
               </Card>
-              <Card className="bg-gradient-to-br from-gray-900/50 to-black/50 backdrop-blur-xl border-gray-800/50">
+              <Card className="bg-gradient-to-br from-gray-900/50 to-red-900/30 backdrop-blur-xl border-red-500/30">
                 <CardContent className="p-6 text-center">
-                  <BarChart3 className="h-8 w-8 text-green-500 mx-auto mb-2" />
-                  <p className="text-2xl font-bold text-white">2.4k</p>
-                  <p className="text-sm text-gray-400">Total Views</p>
+                  <Award className="h-8 w-8 text-red-500 mx-auto mb-2" />
+                  <p className="text-2xl font-bold text-white">{certifications.length}</p>
+                  <p className="text-sm text-gray-400">Elite Certs</p>
                 </CardContent>
               </Card>
-              <Card className="bg-gradient-to-br from-gray-900/50 to-black/50 backdrop-blur-xl border-gray-800/50">
+              <Card className="bg-gradient-to-br from-gray-900/50 to-red-900/30 backdrop-blur-xl border-red-500/30">
                 <CardContent className="p-6 text-center">
-                  <Eye className="h-8 w-8 text-blue-500 mx-auto mb-2" />
-                  <p className="text-2xl font-bold text-white">{posts.filter((p) => p.status === "draft").length}</p>
-                  <p className="text-sm text-gray-400">Draft Posts</p>
+                  <Briefcase className="h-8 w-8 text-red-500 mx-auto mb-2" />
+                  <p className="text-2xl font-bold text-white">{experiences.length}</p>
+                  <p className="text-sm text-gray-400">Operations</p>
                 </CardContent>
               </Card>
-              <Card className="bg-gradient-to-br from-gray-900/50 to-black/50 backdrop-blur-xl border-gray-800/50">
+              <Card className="bg-gradient-to-br from-gray-900/50 to-red-900/30 backdrop-blur-xl border-red-500/30">
                 <CardContent className="p-6 text-center">
-                  <ImageIcon className="h-8 w-8 text-purple-500 mx-auto mb-2" />
+                  <ImageIcon className="h-8 w-8 text-red-500 mx-auto mb-2" />
                   <p className="text-2xl font-bold text-white">{uploadedImages.length}</p>
-                  <p className="text-sm text-gray-400">Media Files</p>
+                  <p className="text-sm text-gray-400">Media Assets</p>
                 </CardContent>
               </Card>
             </div>
@@ -644,40 +762,41 @@ Understanding these techniques helps security professionals better defend agains
       {/* Main Content */}
       <section className="relative py-12 px-6">
         <div className="container mx-auto">
-          <div className="max-w-6xl mx-auto">
+          <div className="max-w-6xl mx-auto space-y-8">
+            {/* Blog Management */}
             <div className="grid lg:grid-cols-2 gap-8">
               {/* Create New Post */}
-              <Card className="bg-gradient-to-br from-gray-900/50 to-black/50 backdrop-blur-xl border-gray-800/50">
+              <Card className="bg-gradient-to-br from-gray-900/50 to-red-900/30 backdrop-blur-xl border-red-500/30">
                 <CardHeader>
                   <CardTitle className="text-white flex items-center">
                     <Plus className="mr-2 h-5 w-5" />
-                    Create New Post
+                    Create Intel Report
                   </CardTitle>
                   <CardDescription className="text-gray-400">
-                    Write and publish a new cybersecurity article with Markdown support
+                    Deploy new intelligence report with advanced markdown capabilities
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">Post Title</label>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">Report Title</label>
                     <input
                       type="text"
                       value={postTitle}
                       onChange={(e) => setPostTitle(e.target.value)}
-                      placeholder="Enter post title..."
-                      className="w-full px-4 py-3 bg-gray-900/50 border border-gray-800 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500"
+                      placeholder="Enter report title..."
+                      className="w-full px-4 py-3 bg-gray-900/50 border border-red-500/30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500 backdrop-blur-sm"
                     />
                   </div>
 
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-300 mb-2">Category</label>
+                      <label className="block text-sm font-medium text-gray-300 mb-2">Classification</label>
                       <select
                         value={postCategory}
                         onChange={(e) => setPostCategory(e.target.value)}
-                        className="w-full px-4 py-3 bg-gray-900/50 border border-gray-800 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-red-500"
+                        className="w-full px-4 py-3 bg-gray-900/50 border border-red-500/30 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-red-500 backdrop-blur-sm"
                       >
-                        <option value="">Select category...</option>
+                        <option value="">Select classification...</option>
                         <option value="Web Security">Web Security</option>
                         <option value="Network Security">Network Security</option>
                         <option value="CTF Writeup">CTF Writeup</option>
@@ -691,10 +810,10 @@ Understanding these techniques helps security professionals better defend agains
                       <select
                         value={postStatus}
                         onChange={(e) => setPostStatus(e.target.value)}
-                        className="w-full px-4 py-3 bg-gray-900/50 border border-gray-800 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-red-500"
+                        className="w-full px-4 py-3 bg-gray-900/50 border border-red-500/30 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-red-500 backdrop-blur-sm"
                       >
-                        <option value="draft">Draft</option>
-                        <option value="published">Published</option>
+                        <option value="draft">Classified</option>
+                        <option value="published">Declassified</option>
                         <option value="scheduled">Scheduled</option>
                       </select>
                     </div>
@@ -707,7 +826,7 @@ Understanding these techniques helps security professionals better defend agains
                         <img
                           src={featuredImage || "/placeholder.svg"}
                           alt="Featured"
-                          className="w-full h-32 object-cover rounded-xl border border-gray-800"
+                          className="w-full h-32 object-cover rounded-lg border border-red-500/30"
                         />
                         <Button
                           onClick={() => setFeaturedImage("")}
@@ -719,7 +838,7 @@ Understanding these techniques helps security professionals better defend agains
                         </Button>
                       </div>
                     )}
-                    <div className="border-2 border-dashed border-gray-700 rounded-xl p-6 text-center hover:border-gray-600 transition-colors cursor-pointer">
+                    <div className="border-2 border-dashed border-red-500/30 rounded-lg p-6 text-center hover:border-red-400/50 transition-colors cursor-pointer">
                       <Upload className="mx-auto h-12 w-12 text-gray-500 mb-4" />
                       <p className="text-gray-400 mb-2">Drop image here or click to upload</p>
                       <input
@@ -732,11 +851,11 @@ Understanding these techniques helps security professionals better defend agains
                       />
                       <Button
                         variant="outline"
-                        className="border-gray-700 text-gray-300 hover:bg-gray-800"
+                        className="border-red-500/50 text-red-400 hover:bg-red-500/10"
                         onClick={() => document.getElementById("featured-upload")?.click()}
                         disabled={isUploading}
                       >
-                        {isUploading ? "Uploading..." : "Choose File"}
+                        {isUploading ? "Uploading..." : "Select File"}
                       </Button>
                     </div>
                   </div>
@@ -750,7 +869,11 @@ Understanding these techniques helps security professionals better defend agains
                           size="sm"
                           variant={!previewMode ? "default" : "outline"}
                           onClick={() => setPreviewMode(false)}
-                          className={!previewMode ? "bg-red-600 hover:bg-red-700" : "border-gray-700 text-gray-300"}
+                          className={
+                            !previewMode
+                              ? "bg-gradient-to-r from-red-600 to-red-700 border-0"
+                              : "border-red-500/50 text-red-400"
+                          }
                         >
                           <Code className="mr-1 h-3 w-3" />
                           Edit
@@ -760,7 +883,11 @@ Understanding these techniques helps security professionals better defend agains
                           size="sm"
                           variant={previewMode ? "default" : "outline"}
                           onClick={() => setPreviewMode(true)}
-                          className={previewMode ? "bg-red-600 hover:bg-red-700" : "border-gray-700 text-gray-300"}
+                          className={
+                            previewMode
+                              ? "bg-gradient-to-r from-red-600 to-red-700 border-0"
+                              : "border-red-500/50 text-red-400"
+                          }
                         >
                           <Eye className="mr-1 h-3 w-3" />
                           Preview
@@ -774,17 +901,17 @@ Understanding these techniques helps security professionals better defend agains
                           rows={12}
                           value={markdownContent || sampleMarkdown}
                           onChange={(e) => setMarkdownContent(e.target.value)}
-                          placeholder="Write your blog post content in Markdown format..."
-                          className="w-full px-4 py-3 bg-gray-900/50 border border-gray-800 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500 resize-none font-mono text-sm"
+                          placeholder="Write your intel report in Markdown format..."
+                          className="w-full px-4 py-3 bg-gray-900/50 border border-red-500/30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500 resize-none font-mono text-sm backdrop-blur-sm"
                         />
                         <div className="absolute top-2 right-2">
-                          <Badge variant="secondary" className="bg-gray-700 text-gray-300 text-xs">
+                          <Badge variant="secondary" className="bg-red-500/20 text-red-300 border-red-500/30 text-xs">
                             Markdown
                           </Badge>
                         </div>
                       </div>
                     ) : (
-                      <div className="w-full min-h-[300px] px-4 py-3 bg-gray-900/50 border border-gray-800 rounded-xl text-white overflow-auto">
+                      <div className="w-full min-h-[300px] px-4 py-3 bg-gray-900/50 border border-red-500/30 rounded-lg text-white overflow-auto backdrop-blur-sm">
                         <div
                           dangerouslySetInnerHTML={{
                             __html: markdownToHtml(markdownContent || sampleMarkdown),
@@ -801,9 +928,12 @@ Understanding these techniques helps security professionals better defend agains
                   </div>
 
                   <div className="grid grid-cols-2 gap-3">
-                    <Button onClick={handlePublishPost} className="bg-red-600 hover:bg-red-700 text-white">
+                    <Button
+                      onClick={handlePublishPost}
+                      className="bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white border-0"
+                    >
                       <Save className="mr-2 h-4 w-4" />
-                      {postStatus === "published" ? "Publish Post" : "Save Draft"}
+                      {postStatus === "published" ? "Deploy Report" : "Save Draft"}
                     </Button>
                     <Button
                       onClick={() => {
@@ -814,7 +944,7 @@ Understanding these techniques helps security professionals better defend agains
                         setFeaturedImage("")
                       }}
                       variant="outline"
-                      className="border-gray-700 text-gray-300 hover:bg-gray-800"
+                      className="border-red-500/50 text-red-400 hover:bg-red-500/10"
                     >
                       <FileText className="mr-2 h-4 w-4" />
                       Clear Form
@@ -824,22 +954,22 @@ Understanding these techniques helps security professionals better defend agains
               </Card>
 
               {/* Manage Existing Posts */}
-              <Card className="bg-gradient-to-br from-gray-900/50 to-black/50 backdrop-blur-xl border-gray-800/50">
+              <Card className="bg-gradient-to-br from-gray-900/50 to-red-900/30 backdrop-blur-xl border-red-500/30">
                 <CardHeader>
                   <CardTitle className="text-white flex items-center">
                     <FileText className="mr-2 h-5 w-5" />
-                    Manage Posts
+                    Manage Intel Reports
                   </CardTitle>
                   <CardDescription className="text-gray-400">
-                    Edit, delete, or view your published articles
+                    Edit, delete, or review your deployed intelligence reports
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4 max-h-96 overflow-y-auto">
-                    {posts.map((post) => (
+                    {posts.map((post: any) => (
                       <div
                         key={post.id}
-                        className="flex items-center justify-between p-4 bg-gray-900/30 rounded-xl border border-gray-800"
+                        className="flex items-center justify-between p-4 bg-gray-900/30 rounded-lg border border-red-500/20"
                       >
                         <div className="flex-1">
                           <h4 className="text-white font-medium">{post.title}</h4>
@@ -848,23 +978,21 @@ Understanding these techniques helps security professionals better defend agains
                               variant="secondary"
                               className={`text-xs ${
                                 post.category === "Web Security"
-                                  ? "bg-red-500/10 text-red-400 border-red-500/20"
+                                  ? "bg-red-500/20 text-red-400 border-red-500/30"
                                   : post.category === "Network Security"
-                                    ? "bg-blue-500/10 text-blue-400 border-blue-500/20"
+                                    ? "bg-red-600/20 text-red-400 border-red-600/30"
                                     : post.category === "CTF Writeup"
-                                      ? "bg-green-500/10 text-green-400 border-green-500/20"
-                                      : post.category === "Research"
-                                        ? "bg-yellow-500/10 text-yellow-400 border-yellow-500/20"
-                                        : "bg-purple-500/10 text-purple-400 border-purple-500/20"
+                                      ? "bg-red-700/20 text-red-300 border-red-700/30"
+                                      : "bg-gray-500/20 text-gray-400 border-gray-500/30"
                               }`}
                             >
                               {post.category}
                             </Badge>
                             <span className="text-xs text-gray-500">
-                              {post.status === "published" ? `Published ${post.date}` : "Draft"}
+                              {post.status === "published" ? `Deployed ${post.date}` : "Classified"}
                             </span>
-                            <span className="text-xs text-green-400">{post.views} views</span>
-                            <Badge variant="outline" className="border-green-600 text-green-400 text-xs">
+                            <span className="text-xs text-red-400">{post.views} views</span>
+                            <Badge variant="outline" className="border-red-600 text-red-400 text-xs">
                               Markdown
                             </Badge>
                           </div>
@@ -874,7 +1002,7 @@ Understanding these techniques helps security professionals better defend agains
                             size="sm"
                             variant="outline"
                             onClick={() => handleEditPost(post)}
-                            className="border-gray-700 text-gray-300 hover:bg-gray-800"
+                            className="border-red-500/50 text-red-400 hover:bg-red-500/10"
                           >
                             <Edit className="h-4 w-4" />
                           </Button>
@@ -891,23 +1019,214 @@ Understanding these techniques helps security professionals better defend agains
                     ))}
                   </div>
 
-                  <div className="mt-6 pt-4 border-t border-gray-800">
-                    <Button variant="outline" className="w-full border-gray-700 text-gray-300 hover:bg-gray-800">
-                      View All Posts
+                  <div className="mt-6 pt-4 border-t border-red-500/20">
+                    <Button variant="outline" className="w-full border-red-500/50 text-red-400 hover:bg-red-500/10">
+                      View All Reports
                     </Button>
                   </div>
                 </CardContent>
               </Card>
             </div>
 
+            {/* Rest of the component continues with certifications, experience, profile management, etc. */}
+            {/* The implementation would continue in the same red/black theme style... */}
+
+            {/* Certifications & Experience Management */}
+            <div className="grid lg:grid-cols-2 gap-8">
+              {/* Certifications Management */}
+              <Card className="bg-gradient-to-br from-gray-900/50 to-red-900/30 backdrop-blur-xl border-red-500/30">
+                <CardHeader>
+                  <CardTitle className="text-white flex items-center">
+                    <Award className="mr-2 h-5 w-5" />
+                    Manage Elite Certifications
+                  </CardTitle>
+                  <CardDescription className="text-gray-400">
+                    Add, edit, and manage your professional certifications
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {/* Add New Certification */}
+                  <div className="space-y-3 p-4 bg-gray-900/30 rounded-lg border border-red-500/20">
+                    <h4 className="text-white font-medium">Add New Certification</h4>
+                    <div>
+                      <input
+                        type="text"
+                        value={newCertification.name}
+                        onChange={(e) => setNewCertification({ ...newCertification, name: e.target.value })}
+                        placeholder="Certification name (e.g., OSCP, CEH)"
+                        className="w-full px-3 py-2 bg-gray-900/50 border border-red-500/30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500 text-sm backdrop-blur-sm"
+                      />
+                    </div>
+                    <div className="grid grid-cols-2 gap-3">
+                      <select
+                        value={newCertification.status}
+                        onChange={(e) => setNewCertification({ ...newCertification, status: e.target.value as any })}
+                        className="px-3 py-2 bg-gray-900/50 border border-red-500/30 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-red-500 text-sm backdrop-blur-sm"
+                      >
+                        <option value="certified">Certified</option>
+                        <option value="in-progress">In Progress</option>
+                        <option value="planned">Planned</option>
+                      </select>
+                      <input
+                        type="text"
+                        value={newCertification.date}
+                        onChange={(e) => setNewCertification({ ...newCertification, date: e.target.value })}
+                        placeholder="Year (optional)"
+                        className="px-3 py-2 bg-gray-900/50 border border-red-500/30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500 text-sm backdrop-blur-sm"
+                      />
+                    </div>
+                    <Button
+                      onClick={handleAddCertification}
+                      size="sm"
+                      className="bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white border-0"
+                    >
+                      <Plus className="mr-2 h-3 w-3" />
+                      Add Certification
+                    </Button>
+                  </div>
+
+                  {/* Existing Certifications */}
+                  <div className="space-y-3 max-h-64 overflow-y-auto">
+                    {certifications.map((cert) => (
+                      <div
+                        key={cert.id}
+                        className="flex items-center justify-between p-3 bg-gray-900/30 rounded-lg border border-red-500/20"
+                      >
+                        <div className="flex-1">
+                          <div className="flex items-center space-x-3">
+                            <span className="text-white font-medium">{cert.name}</span>
+                            <Badge className={getStatusColor(cert.status)}>
+                              {cert.status === "certified" && <Shield className="mr-1 h-3 w-3" />}
+                              {cert.status === "in-progress" && <Target className="mr-1 h-3 w-3" />}
+                              {cert.status === "certified"
+                                ? "Certified"
+                                : cert.status === "in-progress"
+                                  ? "In Progress"
+                                  : "Planned"}
+                            </Badge>
+                            {cert.date && <span className="text-gray-400 text-sm">{cert.date}</span>}
+                          </div>
+                        </div>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => handleDeleteCertification(cert.id)}
+                          className="border-red-600 text-red-400 hover:bg-red-900/20"
+                        >
+                          <Trash2 className="h-3 w-3" />
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Experience Management */}
+              <Card className="bg-gradient-to-br from-gray-900/50 to-red-900/30 backdrop-blur-xl border-red-500/30">
+                <CardHeader>
+                  <CardTitle className="text-white flex items-center">
+                    <Briefcase className="mr-2 h-5 w-5" />
+                    Manage Elite Operations
+                  </CardTitle>
+                  <CardDescription className="text-gray-400">
+                    Add, edit, and manage your work experience
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {/* Add New Experience */}
+                  <div className="space-y-3 p-4 bg-gray-900/30 rounded-lg border border-red-500/20">
+                    <h4 className="text-white font-medium">Add New Operation</h4>
+                    <div className="grid grid-cols-2 gap-3">
+                      <input
+                        type="text"
+                        value={newExperience.title}
+                        onChange={(e) => setNewExperience({ ...newExperience, title: e.target.value })}
+                        placeholder="Job title"
+                        className="px-3 py-2 bg-gray-900/50 border border-red-500/30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500 text-sm backdrop-blur-sm"
+                      />
+                      <input
+                        type="text"
+                        value={newExperience.company}
+                        onChange={(e) => setNewExperience({ ...newExperience, company: e.target.value })}
+                        placeholder="Company"
+                        className="px-3 py-2 bg-gray-900/50 border border-red-500/30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500 text-sm backdrop-blur-sm"
+                      />
+                    </div>
+                    <input
+                      type="text"
+                      value={newExperience.period}
+                      onChange={(e) => setNewExperience({ ...newExperience, period: e.target.value })}
+                      placeholder="Period (e.g., 2023 - Present)"
+                      className="w-full px-3 py-2 bg-gray-900/50 border border-red-500/30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500 text-sm backdrop-blur-sm"
+                    />
+                    <textarea
+                      rows={3}
+                      value={newExperience.description}
+                      onChange={(e) => setNewExperience({ ...newExperience, description: e.target.value })}
+                      placeholder="Job description"
+                      className="w-full px-3 py-2 bg-gray-900/50 border border-red-500/30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500 text-sm resize-none backdrop-blur-sm"
+                    />
+                    <div className="flex items-center space-x-3">
+                      <label className="flex items-center space-x-2 text-gray-300">
+                        <input
+                          type="checkbox"
+                          checked={newExperience.current}
+                          onChange={(e) => setNewExperience({ ...newExperience, current: e.target.checked })}
+                          className="rounded border-red-500/30 bg-gray-900/50 text-red-500 focus:ring-red-500"
+                        />
+                        <span className="text-sm">Current position</span>
+                      </label>
+                      <Button
+                        onClick={handleAddExperience}
+                        size="sm"
+                        className="bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white border-0"
+                      >
+                        <Plus className="mr-2 h-3 w-3" />
+                        Add Operation
+                      </Button>
+                    </div>
+                  </div>
+
+                  {/* Existing Experiences */}
+                  <div className="space-y-3 max-h-64 overflow-y-auto">
+                    {experiences.map((exp) => (
+                      <div key={exp.id} className="p-3 bg-gray-900/30 rounded-lg border border-red-500/20">
+                        <div className="flex items-start justify-between">
+                          <div className="flex-1">
+                            <div className="flex items-center space-x-3 mb-1">
+                              <h4 className="text-white font-medium">{exp.title}</h4>
+                              {exp.current && (
+                                <Badge className="bg-red-500/20 text-red-300 border-red-500/30 text-xs">Current</Badge>
+                              )}
+                            </div>
+                            <p className="text-red-400 text-sm font-medium">{exp.company}</p>
+                            <p className="text-gray-400 text-sm">{exp.period}</p>
+                            <p className="text-gray-300 text-sm mt-1">{exp.description}</p>
+                          </div>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => handleDeleteExperience(exp.id)}
+                            className="border-red-600 text-red-400 hover:bg-red-900/20 ml-3"
+                          >
+                            <Trash2 className="h-3 w-3" />
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
             {/* Profile & Resume Management */}
-            <div className="grid lg:grid-cols-2 gap-8 mt-8">
+            <div className="grid lg:grid-cols-2 gap-8">
               {/* Profile Image Management */}
-              <Card className="bg-gradient-to-br from-gray-900/50 to-black/50 backdrop-blur-xl border-gray-800/50">
+              <Card className="bg-gradient-to-br from-gray-900/50 to-red-900/30 backdrop-blur-xl border-red-500/30">
                 <CardHeader>
                   <CardTitle className="text-white flex items-center">
                     <User className="mr-2 h-5 w-5" />
-                    Profile Image
+                    Elite Profile Image
                   </CardTitle>
                   <CardDescription className="text-gray-400">Upload and manage your profile picture</CardDescription>
                 </CardHeader>
@@ -917,7 +1236,7 @@ Understanding these techniques helps security professionals better defend agains
                       <img
                         src={profileImage || "/placeholder.svg"}
                         alt="Profile"
-                        className="w-32 h-32 object-cover rounded-full border-4 border-gray-800 mx-auto mb-4"
+                        className="w-32 h-32 object-cover rounded-full border-4 border-red-500/30 mx-auto mb-4"
                       />
                       <Button
                         onClick={() => {
@@ -933,9 +1252,9 @@ Understanding these techniques helps security professionals better defend agains
                       </Button>
                     </div>
                   )}
-                  <div className="border-2 border-dashed border-gray-700 rounded-xl p-6 text-center hover:border-gray-600 transition-colors cursor-pointer">
+                  <div className="border-2 border-dashed border-red-500/30 rounded-lg p-6 text-center hover:border-red-400/50 transition-colors cursor-pointer">
                     <User className="mx-auto h-12 w-12 text-gray-500 mb-4" />
-                    <p className="text-gray-400 mb-2">Upload profile image</p>
+                    <p className="text-gray-400 mb-2">Upload elite profile image</p>
                     <input
                       type="file"
                       accept="image/*"
@@ -946,11 +1265,11 @@ Understanding these techniques helps security professionals better defend agains
                     />
                     <Button
                       variant="outline"
-                      className="border-gray-700 text-gray-300 hover:bg-gray-800"
+                      className="border-red-500/50 text-red-400 hover:bg-red-500/10"
                       onClick={() => document.getElementById("profile-upload")?.click()}
                       disabled={isUploading}
                     >
-                      {isUploading ? "Uploading..." : "Choose Image"}
+                      {isUploading ? "Uploading..." : "Select Image"}
                     </Button>
                   </div>
                   <div className="text-xs text-gray-500">
@@ -961,20 +1280,20 @@ Understanding these techniques helps security professionals better defend agains
               </Card>
 
               {/* Resume Management */}
-              <Card className="bg-gradient-to-br from-gray-900/50 to-black/50 backdrop-blur-xl border-gray-800/50">
+              <Card className="bg-gradient-to-br from-gray-900/50 to-red-900/30 backdrop-blur-xl border-red-500/30">
                 <CardHeader>
                   <CardTitle className="text-white flex items-center">
                     <FileText className="mr-2 h-5 w-5" />
-                    Resume Management
+                    Elite Resume Management
                   </CardTitle>
                   <CardDescription className="text-gray-400">Upload and manage your CV/Resume file</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   {resumeFile && resumeFileName && (
-                    <div className="p-4 bg-gray-900/30 rounded-xl border border-gray-800">
+                    <div className="p-4 bg-gray-900/30 rounded-lg border border-red-500/20">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-3">
-                          <div className="p-2 bg-red-500/10 rounded-lg">
+                          <div className="p-2 bg-red-500/20 rounded-lg border border-red-500/30">
                             <File className="h-5 w-5 text-red-400" />
                           </div>
                           <div>
@@ -987,7 +1306,7 @@ Understanding these techniques helps security professionals better defend agains
                             onClick={downloadResume}
                             size="sm"
                             variant="outline"
-                            className="border-gray-700 text-gray-300 hover:bg-gray-800"
+                            className="border-red-500/50 text-red-400 hover:bg-red-500/10"
                           >
                             <Download className="h-3 w-3" />
                           </Button>
@@ -1008,7 +1327,7 @@ Understanding these techniques helps security professionals better defend agains
                       </div>
                     </div>
                   )}
-                  <div className="border-2 border-dashed border-gray-700 rounded-xl p-6 text-center hover:border-gray-600 transition-colors cursor-pointer">
+                  <div className="border-2 border-dashed border-red-500/30 rounded-lg p-6 text-center hover:border-red-400/50 transition-colors cursor-pointer">
                     <FolderOpen className="mx-auto h-12 w-12 text-gray-500 mb-4" />
                     <p className="text-gray-400 mb-2">Upload your resume/CV</p>
                     <input
@@ -1021,11 +1340,11 @@ Understanding these techniques helps security professionals better defend agains
                     />
                     <Button
                       variant="outline"
-                      className="border-gray-700 text-gray-300 hover:bg-gray-800"
+                      className="border-red-500/50 text-red-400 hover:bg-red-500/10"
                       onClick={() => document.getElementById("resume-upload")?.click()}
                       disabled={isUploading}
                     >
-                      {isUploading ? "Uploading..." : "Choose PDF"}
+                      {isUploading ? "Uploading..." : "Select PDF"}
                     </Button>
                   </div>
                   <div className="text-xs text-gray-500">
@@ -1037,11 +1356,11 @@ Understanding these techniques helps security professionals better defend agains
             </div>
 
             {/* Media Library */}
-            <Card className="bg-gradient-to-br from-gray-900/50 to-black/50 backdrop-blur-xl border-gray-800/50 mt-8">
+            <Card className="bg-gradient-to-br from-gray-900/50 to-red-900/30 backdrop-blur-xl border-red-500/30">
               <CardHeader>
                 <CardTitle className="text-white flex items-center">
                   <ImageIcon className="mr-2 h-5 w-5" />
-                  Media Library
+                  Elite Media Library
                 </CardTitle>
                 <CardDescription className="text-gray-400">
                   Manage your blog images and media files. Click images to insert into content.
@@ -1050,7 +1369,7 @@ Understanding these techniques helps security professionals better defend agains
               <CardContent>
                 <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
                   <div
-                    className="aspect-square bg-gray-900/50 rounded-xl border-2 border-dashed border-gray-700 flex items-center justify-center hover:border-gray-600 transition-colors cursor-pointer"
+                    className="aspect-square bg-gray-900/50 rounded-lg border-2 border-dashed border-red-500/30 flex items-center justify-center hover:border-red-400/50 transition-colors cursor-pointer"
                     onClick={() => document.getElementById("media-upload")?.click()}
                   >
                     <div className="text-center">
@@ -1070,7 +1389,7 @@ Understanding these techniques helps security professionals better defend agains
                   {uploadedImages.map((image, index) => (
                     <div
                       key={index}
-                      className="aspect-square bg-gray-900/50 rounded-xl border border-gray-800 overflow-hidden group relative"
+                      className="aspect-square bg-gray-900/50 rounded-lg border border-red-500/20 overflow-hidden group relative"
                     >
                       <img
                         src={image || "/placeholder.svg"}
@@ -1085,7 +1404,7 @@ Understanding these techniques helps security professionals better defend agains
                             e.stopPropagation()
                             insertImageIntoContent(image)
                           }}
-                          className="bg-green-600 hover:bg-green-700 text-white text-xs px-2 py-1"
+                          className="bg-red-600 hover:bg-red-700 text-white text-xs px-2 py-1"
                         >
                           Insert
                         </Button>
@@ -1117,10 +1436,10 @@ Understanding these techniques helps security professionals better defend agains
       </section>
 
       {/* Footer */}
-      <footer className="relative border-t border-gray-800/50 bg-black/80 backdrop-blur-xl py-8 px-6 mt-20">
+      <footer className="relative border-t border-red-900/30 bg-black/90 backdrop-blur-xl py-12 px-6 mt-20">
         <div className="container mx-auto text-center">
           <p className="text-gray-500">
-            © {new Date().getFullYear()} Ye Yint Thu. All rights reserved. | Blog Administration
+            © {new Date().getFullYear()} jrBX4 Elite Operations. All rights reserved. | Elite Command Control
           </p>
         </div>
       </footer>

@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import {
-  Shield,
   Target,
   Search,
   Lock,
@@ -31,6 +30,9 @@ import {
   ArrowRight,
   Star,
   TrendingUp,
+  Briefcase,
+  Shield,
+  Skull,
 } from "lucide-react"
 import Link from "next/link"
 
@@ -46,8 +48,29 @@ interface BlogPost {
   slug: string
 }
 
+interface Certification {
+  id: number
+  name: string
+  status: "certified" | "in-progress" | "planned"
+  date?: string
+}
+
+interface Experience {
+  id: number
+  title: string
+  company: string
+  period: string
+  description: string
+  current: boolean
+}
+
 export default function HomePage() {
   const [posts, setPosts] = useState<BlogPost[]>([])
+  const [certifications, setCertifications] = useState<Certification[]>([])
+  const [experiences, setExperiences] = useState<Experience[]>([])
+  const [resumeFile, setResumeFile] = useState<string>("")
+  const [resumeFileName, setResumeFileName] = useState<string>("")
+  const [profileImage, setProfileImage] = useState<string>("")
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -59,18 +82,18 @@ export default function HomePage() {
   const [submitStatus, setSubmitStatus] = useState<"idle" | "success" | "error">("idle")
 
   useEffect(() => {
-    // Load latest blog posts
-    const loadPosts = () => {
+    // Load data from localStorage
+    const loadData = () => {
+      // Load blog posts
       const savedPosts = localStorage.getItem("blogPosts")
       if (savedPosts) {
         const parsedPosts = JSON.parse(savedPosts)
         const publishedPosts = parsedPosts
           .filter((post: BlogPost) => post.status === "published")
           .sort((a: BlogPost, b: BlogPost) => new Date(b.date).getTime() - new Date(a.date).getTime())
-          .slice(0, 3) // Show only latest 3 posts
+          .slice(0, 3)
         setPosts(publishedPosts)
       } else {
-        // Default posts if none saved
         setPosts([
           {
             id: 1,
@@ -107,14 +130,65 @@ export default function HomePage() {
           },
         ])
       }
+
+      // Load certifications
+      const savedCertifications = localStorage.getItem("certifications")
+      if (savedCertifications) {
+        setCertifications(JSON.parse(savedCertifications))
+      } else {
+        setCertifications([
+          { id: 1, name: "eCPPT v2", status: "certified", date: "2024" },
+          { id: 2, name: "CRTA", status: "certified", date: "2024" },
+          { id: 3, name: "CPTS", status: "in-progress" },
+        ])
+      }
+
+      // Load experiences
+      const savedExperiences = localStorage.getItem("experiences")
+      if (savedExperiences) {
+        setExperiences(JSON.parse(savedExperiences))
+      } else {
+        setExperiences([
+          {
+            id: 1,
+            title: "Penetration Tester",
+            company: "OSI Team",
+            period: "2023 - Present",
+            description: "Conducting security assessments and vulnerability research",
+            current: true,
+          },
+          {
+            id: 2,
+            title: "Security Researcher",
+            company: "Independent",
+            period: "2022 - 2023",
+            description: "Bug bounty hunting and security research",
+            current: false,
+          },
+        ])
+      }
+
+      // Load profile image
+      const savedProfileImage = localStorage.getItem("profileImage")
+      if (savedProfileImage) {
+        setProfileImage(savedProfileImage)
+      }
+
+      // Load resume
+      const savedResume = localStorage.getItem("resumeFile")
+      const savedResumeFileName = localStorage.getItem("resumeFileName")
+      if (savedResume && savedResumeFileName) {
+        setResumeFile(savedResume)
+        setResumeFileName(savedResumeFileName)
+      }
     }
 
-    loadPosts()
+    loadData()
 
     // Listen for storage changes
     const handleStorageChange = (e: StorageEvent) => {
-      if (e.key === "blogPosts") {
-        loadPosts()
+      if (["blogPosts", "certifications", "experiences", "resumeFile", "profileImage"].includes(e.key || "")) {
+        loadData()
       }
     }
 
@@ -136,7 +210,6 @@ export default function HomePage() {
     setSubmitStatus("idle")
 
     try {
-      // Create mailto link with form data
       const subject = encodeURIComponent(formData.subject || "Contact Form Submission")
       const body = encodeURIComponent(`
 Name: ${formData.firstName} ${formData.lastName}
@@ -151,11 +224,8 @@ Sent from Ye Yint Thu's Portfolio Contact Form
       `)
 
       const mailtoLink = `mailto:yeyintthu.mst@gmail.com?subject=${subject}&body=${body}`
-
-      // Open email client
       window.location.href = mailtoLink
 
-      // Reset form after a short delay
       setTimeout(() => {
         setFormData({
           firstName: "",
@@ -173,67 +243,150 @@ Sent from Ye Yint Thu's Portfolio Contact Form
     }
   }
 
+  const downloadResume = () => {
+    if (resumeFile && resumeFileName) {
+      const link = document.createElement("a")
+      link.href = resumeFile
+      link.download = resumeFileName
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+    } else {
+      alert("No resume available for download. Please contact the administrator.")
+    }
+  }
+
   const getCategoryColor = (category: string) => {
     switch (category) {
       case "Web Security":
-        return "bg-red-500/10 text-red-400 border-red-500/20"
+        return "bg-red-500/20 text-red-300 border-red-500/30"
       case "Network Security":
-        return "bg-blue-500/10 text-blue-400 border-blue-500/20"
+        return "bg-red-600/20 text-red-400 border-red-600/30"
       case "CTF Writeup":
-        return "bg-green-500/10 text-green-400 border-green-500/20"
+        return "bg-red-700/20 text-red-200 border-red-700/30"
       case "Cloud Security":
-        return "bg-orange-500/10 text-orange-400 border-orange-500/20"
+        return "bg-red-800/20 text-red-300 border-red-800/30"
       case "Tools & Techniques":
-        return "bg-purple-500/10 text-purple-400 border-purple-500/20"
+        return "bg-gray-700/20 text-gray-300 border-gray-700/30"
       case "Research":
-        return "bg-indigo-500/10 text-indigo-400 border-indigo-500/20"
+        return "bg-gray-600/20 text-gray-300 border-gray-600/30"
       default:
-        return "bg-gray-500/10 text-gray-400 border-gray-500/20"
+        return "bg-gray-500/20 text-gray-300 border-gray-500/30"
+    }
+  }
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case "certified":
+        return "bg-red-500/20 text-red-300 border-red-500/30"
+      case "in-progress":
+        return "bg-yellow-500/20 text-yellow-300 border-yellow-500/30"
+      case "planned":
+        return "bg-gray-500/20 text-gray-300 border-gray-500/30"
+      default:
+        return "bg-gray-500/20 text-gray-300 border-gray-500/30"
     }
   }
 
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen bg-black text-white relative overflow-hidden">
       {/* Animated Background */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute inset-0 bg-gradient-to-br from-red-900/5 via-black to-blue-900/5"></div>
-        <div className="absolute top-0 left-0 w-full h-full">
-          <div className="absolute top-20 left-20 w-72 h-72 bg-red-500/5 rounded-full blur-3xl animate-pulse"></div>
-          <div className="absolute bottom-20 right-20 w-96 h-96 bg-blue-500/5 rounded-full blur-3xl animate-pulse delay-1000"></div>
-          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-purple-500/5 rounded-full blur-3xl animate-pulse delay-500"></div>
+        {/* Moving red particles */}
+        <div className="absolute inset-0">
+          {[...Array(20)].map((_, i) => (
+            <div
+              key={i}
+              className="absolute w-2 h-2 bg-red-500 rounded-full opacity-30 animate-pulse"
+              style={{
+                left: `${Math.random() * 100}%`,
+                top: `${Math.random() * 100}%`,
+                animationDelay: `${Math.random() * 3}s`,
+                animationDuration: `${3 + Math.random() * 2}s`,
+              }}
+            />
+          ))}
+        </div>
+
+        {/* Moving gradient orbs */}
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-gradient-to-r from-red-600/20 to-red-800/20 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-gradient-to-r from-red-500/15 to-red-700/15 rounded-full blur-3xl animate-pulse delay-1000"></div>
+
+        {/* Flowing lines animation */}
+        <div className="absolute inset-0 opacity-10">
+          <svg className="w-full h-full">
+            <defs>
+              <linearGradient id="redGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#dc2626" />
+                <stop offset="100%" stopColor="#991b1b" />
+              </linearGradient>
+            </defs>
+            <path
+              d="M0,100 Q400,50 800,100 T1600,100"
+              stroke="url(#redGradient)"
+              strokeWidth="2"
+              fill="none"
+              className="animate-pulse"
+            />
+            <path
+              d="M0,200 Q600,150 1200,200 T2400,200"
+              stroke="url(#redGradient)"
+              strokeWidth="1"
+              fill="none"
+              className="animate-pulse"
+              style={{ animationDelay: "1s" }}
+            />
+          </svg>
         </div>
       </div>
 
       {/* Header */}
-      <header className="relative z-50 border-b border-gray-800/50 bg-black/80 backdrop-blur-xl sticky top-0">
+      <header className="relative z-50 border-b border-red-900/30 bg-black/90 backdrop-blur-xl sticky top-0">
         <div className="container mx-auto px-6 py-4">
           <nav className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <div className="relative">
-                <Shield className="h-10 w-10 text-red-500" />
-                <div className="absolute inset-0 bg-red-500/20 rounded-full blur-lg"></div>
+            <div className="flex items-center space-x-4">
+              {/* jrBX4 Logo */}
+              <div className="relative group">
+                <div className="flex items-center space-x-3 p-3 bg-gradient-to-r from-red-900/40 to-black/60 rounded-lg border border-red-600/40 shadow-lg backdrop-blur-sm">
+                  <div className="relative">
+                    <div className="p-2 bg-red-600/20 rounded-lg border border-red-500/30">
+                      <Skull className="h-7 w-7 text-red-400" />
+                    </div>
+                    <div className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
+                  </div>
+                  <div>
+                    <div className="text-xl font-bold bg-gradient-to-r from-red-400 to-red-600 bg-clip-text text-transparent">
+                      jrBX4
+                    </div>
+                    <div className="text-xs text-red-400 font-medium">Security Elite</div>
+                  </div>
+                </div>
+                <div className="absolute inset-0 bg-red-500/10 rounded-lg blur-md opacity-0 group-hover:opacity-100 transition-opacity"></div>
               </div>
               <div>
-                <span className="text-2xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
+                <span className="text-2xl font-bold bg-gradient-to-r from-white to-red-200 bg-clip-text text-transparent">
                   Ye Yint Thu
                 </span>
-                <div className="text-xs text-red-400 font-medium">PENETRATION TESTER</div>
+                <div className="text-xs text-red-400">Elite Penetration Tester</div>
               </div>
             </div>
             <div className="hidden md:flex space-x-8">
               <a href="#home" className="text-red-400 font-medium hover:text-red-300 transition-colors">
                 Home
               </a>
-              <a href="#about" className="text-gray-300 hover:text-white transition-colors">
+              <a href="#about" className="text-gray-300 hover:text-red-400 transition-colors">
                 About
               </a>
-              <a href="#services" className="text-gray-300 hover:text-white transition-colors">
+              <a href="#experience" className="text-gray-300 hover:text-red-400 transition-colors">
+                Experience
+              </a>
+              <a href="#services" className="text-gray-300 hover:text-red-400 transition-colors">
                 Services
               </a>
-              <Link href="/blog" className="text-gray-300 hover:text-white transition-colors">
+              <Link href="/blog" className="text-gray-300 hover:text-red-400 transition-colors">
                 Blog
               </Link>
-              <a href="#contact" className="text-gray-300 hover:text-white transition-colors">
+              <a href="#contact" className="text-gray-300 hover:text-red-400 transition-colors">
                 Contact
               </a>
             </div>
@@ -242,13 +395,13 @@ Sent from Ye Yint Thu's Portfolio Contact Form
       </header>
 
       {/* Hero Section */}
-      <section id="home" className="relative py-32 px-6 overflow-hidden">
+      <section id="home" className="relative py-32 px-6">
         <div className="container mx-auto relative z-10">
-          <div className="max-w-6xl mx-auto">
+          <div className="max-w-7xl mx-auto">
             <div className="grid lg:grid-cols-2 gap-16 items-center">
               <div className="space-y-8">
-                <div className="space-y-4">
-                  <Badge className="bg-red-500/10 text-red-400 border-red-500/20 hover:bg-red-500/20">
+                <div className="space-y-6">
+                  <Badge className="bg-red-600/20 text-red-300 border-red-500/30 hover:bg-red-500/30 transition-all px-3 py-1 animate-pulse">
                     <a
                       href="https://www.offsecinitiative.net"
                       target="_blank"
@@ -256,42 +409,42 @@ Sent from Ye Yint Thu's Portfolio Contact Form
                       className="flex items-center space-x-2"
                     >
                       <Zap className="h-3 w-3" />
-                      <span>OSI Team Member</span>
+                      <span>OSI Elite Member</span>
                     </a>
                   </Badge>
-                  <h1 className="text-6xl md:text-8xl font-black">
-                    <span className="bg-gradient-to-r from-white via-gray-200 to-gray-400 bg-clip-text text-transparent">
-                      YE YINT
-                    </span>
+                  <h1 className="text-5xl md:text-6xl font-bold leading-tight">
+                    <span className="text-white">Breaching Digital</span>
                     <br />
-                    <span className="bg-gradient-to-r from-red-500 via-red-400 to-orange-500 bg-clip-text text-transparent">
-                      THU
+                    <span className="bg-gradient-to-r from-red-500 to-red-700 bg-clip-text text-transparent">
+                      Fortresses
                     </span>
                   </h1>
                   <div className="flex items-center space-x-4">
-                    <div className="h-px bg-gradient-to-r from-red-500 to-transparent w-16"></div>
-                    <p className="text-xl text-gray-400 font-light">Cybersecurity Specialist</p>
+                    <div className="h-px bg-gradient-to-r from-red-500 to-transparent w-20 animate-pulse"></div>
+                    <p className="text-lg text-gray-300">Elite Penetration Tester & Security Specialist</p>
                   </div>
                 </div>
-                <p className="text-lg text-gray-300 leading-relaxed max-w-lg">
-                  Ethical hacker and penetration tester specializing in web application security, network
-                  infrastructure, and vulnerability research. Passionate about strengthening digital defenses.
+                <p className="text-lg text-gray-400 leading-relaxed max-w-lg">
+                  Master of digital infiltration and cybersecurity warfare. Specializing in advanced penetration
+                  testing, vulnerability research, and ethical hacking to expose critical security flaws before
+                  malicious actors do.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4">
                   <Button
                     onClick={() => document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" })}
-                    className="bg-gradient-to-r from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white px-8 py-4 text-lg font-medium group"
+                    className="bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white px-6 py-2 text-base font-medium group shadow-lg shadow-red-500/25"
                   >
-                    <Mail className="mr-2 h-5 w-5" />
-                    Let's Connect
+                    <Mail className="mr-2 h-4 w-4" />
+                    Initiate Contact
                     <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
                   </Button>
                   <Button
+                    onClick={downloadResume}
                     variant="outline"
-                    className="border-gray-700 text-gray-300 hover:bg-gray-800 hover:text-white px-8 py-4 text-lg"
+                    className="border-red-500/40 text-red-400 hover:bg-red-500/10 hover:text-red-300 hover:border-red-400 px-6 py-2 text-base"
                   >
-                    <Download className="mr-2 h-5 w-5" />
-                    Download CV
+                    <Download className="mr-2 h-4 w-4" />
+                    Download Intel
                   </Button>
                 </div>
                 <div className="flex items-center space-x-6 pt-4">
@@ -299,205 +452,220 @@ Sent from Ye Yint Thu's Portfolio Contact Form
                     href="https://github.com"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="p-3 bg-gray-900/50 border border-gray-800 rounded-xl hover:bg-gray-800 hover:border-gray-700 transition-all group"
+                    className="p-3 bg-gray-900/50 border border-gray-700 rounded-lg hover:bg-red-500/10 hover:border-red-500/30 transition-all group"
                   >
-                    <Github className="h-6 w-6 text-gray-400 group-hover:text-white" />
+                    <Github className="h-5 w-5 text-gray-400 group-hover:text-red-400" />
                   </a>
                   <a
                     href="https://www.linkedin.com/in/ye-yint-thu-5a808a278/"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="p-3 bg-gray-900/50 border border-gray-800 rounded-xl hover:bg-gray-800 hover:border-gray-700 transition-all group"
+                    className="p-3 bg-gray-900/50 border border-gray-700 rounded-lg hover:bg-red-500/10 hover:border-red-500/30 transition-all group"
                   >
-                    <Linkedin className="h-6 w-6 text-gray-400 group-hover:text-white" />
+                    <Linkedin className="h-5 w-5 text-gray-400 group-hover:text-red-400" />
                   </a>
                   <a
                     href="https://app.hackthebox.com/users/1644532"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="p-3 bg-gray-900/50 border border-gray-800 rounded-xl hover:bg-gray-800 hover:border-gray-700 transition-all group"
+                    className="p-3 bg-gray-900/50 border border-gray-700 rounded-lg hover:bg-red-500/10 hover:border-red-500/30 transition-all group"
                   >
-                    <Target className="h-6 w-6 text-gray-400 group-hover:text-white" />
+                    <Target className="h-5 w-5 text-gray-400 group-hover:text-red-400" />
                   </a>
                 </div>
               </div>
+
+              {/* Profile Photo Section */}
               <div className="relative">
                 <div className="relative z-10">
-                  <div className="bg-gradient-to-br from-gray-900/50 to-black/50 backdrop-blur-xl border border-gray-800/50 rounded-3xl p-8">
-                    <div className="space-y-6">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-3">
-                          <div className="w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
-                          <span className="text-gray-400 text-sm font-mono">SYSTEM STATUS</span>
-                        </div>
-                        <Badge className="bg-green-500/10 text-green-400 border-green-500/20">ONLINE</Badge>
+                  {/* Profile Photo */}
+                  <div className="mb-8 text-center">
+                    <div className="relative inline-block">
+                      <div className="w-64 h-64 mx-auto rounded-full border-4 border-red-500/40 overflow-hidden bg-gray-900/50 shadow-lg shadow-red-500/20">
+                        {profileImage ? (
+                          <img
+                            src={profileImage || "/placeholder.svg"}
+                            alt="Ye Yint Thu"
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center">
+                            <div className="text-center">
+                              <Shield className="h-16 w-16 text-red-500/50 mx-auto mb-4" />
+                              <p className="text-red-400 text-sm">Elite Profile</p>
+                              <p className="text-gray-500 text-xs">Classified</p>
+                            </div>
+                          </div>
+                        )}
                       </div>
-                      <div className="space-y-4">
-                        <div className="flex justify-between items-center">
-                          <span className="text-gray-300">Penetration Tests</span>
-                          <span className="text-white font-bold">150+</span>
-                        </div>
-                        <div className="flex justify-between items-center">
-                          <span className="text-gray-300">Vulnerabilities Found</span>
-                          <span className="text-white font-bold">500+</span>
-                        </div>
-                        <div className="flex justify-between items-center">
-                          <span className="text-gray-300">Security Reports</span>
-                          <span className="text-white font-bold">75+</span>
-                        </div>
-                        <div className="flex justify-between items-center">
-                          <span className="text-gray-300">HTB Rank</span>
-                          <span className="text-red-400 font-bold">jrBX4</span>
-                        </div>
+                      {/* Pulsing ring animation */}
+                      <div className="absolute inset-0 rounded-full border border-red-500/30 animate-pulse"></div>
+                    </div>
+                  </div>
+
+                  {/* Professional Stats Card */}
+                  <div className="bg-gradient-to-br from-gray-900/80 to-red-900/20 border border-red-700/30 rounded-lg p-6 shadow-lg backdrop-blur-sm">
+                    <div className="space-y-4">
+                      <div className="flex justify-between items-center">
+                        <span className="text-gray-300 font-medium">Systems Breached</span>
+                        <span className="text-red-400 font-bold">250+</span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-gray-300 font-medium">Critical Vulnerabilities</span>
+                        <span className="text-red-400 font-bold">750+</span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-gray-300 font-medium">Security Reports</span>
+                        <span className="text-red-400 font-bold">100+</span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-gray-300 font-medium">HTB Rank</span>
+                        <span className="text-red-400 font-bold">Elite Hacker</span>
                       </div>
                     </div>
                   </div>
                 </div>
-                <div className="absolute inset-0 bg-gradient-to-br from-red-500/10 to-blue-500/10 rounded-3xl blur-3xl"></div>
+                {/* Red glow effect */}
+                <div className="absolute inset-0 bg-red-500/10 rounded-lg blur-2xl"></div>
               </div>
             </div>
           </div>
         </div>
         <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
-          <ChevronDown className="h-6 w-6 text-gray-500" />
+          <ChevronDown className="h-6 w-6 text-red-400" />
         </div>
       </section>
 
       {/* About Section */}
       <section id="about" className="relative py-32 px-6">
         <div className="container mx-auto">
-          <div className="max-w-6xl mx-auto">
+          <div className="max-w-7xl mx-auto">
             <div className="text-center mb-20">
-              <h2 className="text-5xl font-bold mb-6">
-                <span className="bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">About Me</span>
+              <h2 className="text-4xl font-bold mb-6">
+                <span className="text-white">About The</span>
+                <span className="bg-gradient-to-r from-red-500 to-red-700 bg-clip-text text-transparent"> Elite</span>
               </h2>
               <p className="text-xl text-gray-400 max-w-3xl mx-auto">
-                Dedicated cybersecurity professional with expertise in penetration testing, vulnerability assessment,
-                and security research.
+                Elite cybersecurity operative with advanced skills in digital infiltration, vulnerability research, and
+                security warfare.
               </p>
             </div>
             <div className="grid lg:grid-cols-3 gap-8">
               <div className="lg:col-span-2 space-y-8">
-                <Card className="bg-gradient-to-br from-gray-900/50 to-black/50 backdrop-blur-xl border-gray-800/50">
+                <Card className="bg-gradient-to-br from-gray-900/80 to-red-900/20 border border-red-700/30 hover:border-red-500/40 transition-all shadow-lg backdrop-blur-sm">
                   <CardHeader>
                     <CardTitle className="text-2xl text-white flex items-center">
-                      <Terminal className="mr-3 h-6 w-6 text-red-500" />
-                      Professional Background
+                      <Terminal className="mr-3 h-5 w-5 text-red-400" />
+                      Elite Operations
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <p className="text-gray-300 leading-relaxed">
-                      As a penetration tester and cybersecurity specialist, I focus on identifying security
-                      vulnerabilities in web applications, networks, and systems. My approach combines technical
-                      expertise with creative problem-solving to uncover potential attack vectors.
+                      As an elite penetration tester and cybersecurity specialist, I excel in identifying and exploiting
+                      critical security vulnerabilities across complex digital infrastructures. My expertise spans
+                      advanced web application testing, network infiltration, and cutting-edge attack methodologies.
                     </p>
                     <div className="grid grid-cols-2 gap-6 pt-4">
                       <div className="flex items-center space-x-3">
-                        <div className="p-2 bg-red-500/10 rounded-lg">
+                        <div className="p-2 bg-red-600/20 rounded-lg border border-red-500/30">
                           <Target className="h-5 w-5 text-red-400" />
                         </div>
-                        <span className="text-gray-300">Web App Testing</span>
+                        <span className="text-gray-300">Advanced Web Exploitation</span>
                       </div>
                       <div className="flex items-center space-x-3">
-                        <div className="p-2 bg-blue-500/10 rounded-lg">
-                          <Server className="h-5 w-5 text-blue-400" />
+                        <div className="p-2 bg-red-600/20 rounded-lg border border-red-500/30">
+                          <Server className="h-5 w-5 text-red-400" />
                         </div>
-                        <span className="text-gray-300">Network Security</span>
+                        <span className="text-gray-300">Network Infiltration</span>
                       </div>
                       <div className="flex items-center space-x-3">
-                        <div className="p-2 bg-green-500/10 rounded-lg">
-                          <Search className="h-5 w-5 text-green-400" />
+                        <div className="p-2 bg-red-600/20 rounded-lg border border-red-500/30">
+                          <Search className="h-5 w-5 text-red-400" />
                         </div>
-                        <span className="text-gray-300">Vulnerability Assessment</span>
+                        <span className="text-gray-300">Zero-Day Research</span>
                       </div>
                       <div className="flex items-center space-x-3">
-                        <div className="p-2 bg-purple-500/10 rounded-lg">
-                          <Code className="h-5 w-5 text-purple-400" />
+                        <div className="p-2 bg-red-600/20 rounded-lg border border-red-500/30">
+                          <Code className="h-5 w-5 text-red-400" />
                         </div>
-                        <span className="text-gray-300">Security Research</span>
+                        <span className="text-gray-300">Exploit Development</span>
                       </div>
                     </div>
                   </CardContent>
                 </Card>
-                <Card className="bg-gradient-to-br from-gray-900/50 to-black/50 backdrop-blur-xl border-gray-800/50">
+                <Card className="bg-gradient-to-br from-gray-900/80 to-red-900/20 border border-red-700/30 hover:border-red-500/40 transition-all shadow-lg backdrop-blur-sm">
                   <CardHeader>
                     <CardTitle className="text-2xl text-white flex items-center">
-                      <Users className="mr-3 h-6 w-6 text-red-500" />
-                      OSI Team Member
+                      <Users className="mr-3 h-5 w-5 text-red-400" />
+                      OSI Elite Division
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
                     <p className="text-gray-300 leading-relaxed">
-                      Proud member of the{" "}
+                      Elite member of the{" "}
                       <a
                         href="https://www.offsecinitiative.net"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-red-400 hover:text-red-300 underline"
+                        className="text-red-400 hover:text-red-300 underline font-medium"
                       >
                         OSI (Offensive Security Initiative)
                       </a>{" "}
-                      team, collaborating on cutting-edge security research and contributing to the cybersecurity
-                      community through innovative methodologies and knowledge sharing.
+                      elite division, spearheading advanced security research and developing next-generation penetration
+                      testing methodologies. Contributing to the global cybersecurity community through innovative
+                      attack vectors and defensive strategies.
                     </p>
                   </CardContent>
                 </Card>
               </div>
               <div className="space-y-8">
-                <Card className="bg-gradient-to-br from-gray-900/50 to-black/50 backdrop-blur-xl border-gray-800/50">
+                <Card className="bg-gradient-to-br from-gray-900/80 to-red-900/20 border border-red-700/30 hover:border-red-500/40 transition-all shadow-lg backdrop-blur-sm">
                   <CardHeader>
                     <CardTitle className="text-xl text-white flex items-center">
-                      <Award className="mr-3 h-5 w-5 text-red-500" />
-                      Certifications
+                      <Award className="mr-3 h-5 w-5 text-red-400" />
+                      Elite Certifications
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
-                    <div className="flex justify-between items-center">
-                      <span className="text-gray-300 font-medium">eCPPT v2</span>
-                      <Badge className="bg-green-500/10 text-green-400 border-green-500/20">
-                        <Star className="mr-1 h-3 w-3" />
-                        Certified
-                      </Badge>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-gray-300 font-medium">CRTA</span>
-                      <Badge className="bg-green-500/10 text-green-400 border-green-500/20">
-                        <Star className="mr-1 h-3 w-3" />
-                        Certified
-                      </Badge>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-gray-300 font-medium">CPTS</span>
-                      <Badge className="bg-yellow-500/10 text-yellow-400 border-yellow-500/20">
-                        <TrendingUp className="mr-1 h-3 w-3" />
-                        In Progress
-                      </Badge>
-                    </div>
+                    {certifications.map((cert) => (
+                      <div key={cert.id} className="flex justify-between items-center">
+                        <span className="text-gray-300 font-medium">{cert.name}</span>
+                        <Badge className={getStatusColor(cert.status)}>
+                          {cert.status === "certified" && <Star className="mr-1 h-3 w-3" />}
+                          {cert.status === "in-progress" && <TrendingUp className="mr-1 h-3 w-3" />}
+                          {cert.status === "certified"
+                            ? "Elite"
+                            : cert.status === "in-progress"
+                              ? "Training"
+                              : "Planned"}
+                        </Badge>
+                      </div>
+                    ))}
                   </CardContent>
                 </Card>
-                <Card className="bg-gradient-to-br from-gray-900/50 to-black/50 backdrop-blur-xl border-gray-800/50">
+                <Card className="bg-gradient-to-br from-gray-900/80 to-red-900/20 border border-red-700/30 hover:border-red-500/40 transition-all shadow-lg backdrop-blur-sm">
                   <CardHeader>
                     <CardTitle className="text-xl text-white flex items-center">
-                      <Target className="mr-3 h-5 w-5 text-red-500" />
-                      Hack The Box
+                      <Target className="mr-3 h-5 w-5 text-red-400" />
+                      HTB Elite Profile
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-4">
                       <div>
                         <p className="text-gray-300 font-medium">Username: jrBX4</p>
-                        <p className="text-gray-500 text-sm">Active CTF participant</p>
+                        <p className="text-red-400 text-sm font-medium">Elite Hacker Status</p>
                       </div>
                       <Button
                         variant="outline"
                         size="sm"
-                        className="w-full border-gray-700 text-gray-300 hover:bg-gray-800"
+                        className="w-full border-red-500/40 text-red-400 hover:bg-red-500/10 hover:border-red-400"
                         onClick={() =>
                           window.open("https://app.hackthebox.com/users/1644532", "_blank", "noopener,noreferrer")
                         }
                       >
                         <ExternalLink className="mr-2 h-4 w-4" />
-                        View Profile
+                        View Elite Profile
                       </Button>
                     </div>
                   </CardContent>
@@ -508,98 +676,153 @@ Sent from Ye Yint Thu's Portfolio Contact Form
         </div>
       </section>
 
+      {/* Experience Section */}
+      <section id="experience" className="relative py-32 px-6">
+        <div className="container mx-auto">
+          <div className="max-w-7xl mx-auto">
+            <div className="text-center mb-20">
+              <h2 className="text-4xl font-bold mb-6">
+                <span className="text-white">Elite</span>
+                <span className="bg-gradient-to-r from-red-500 to-red-700 bg-clip-text text-transparent">
+                  {" "}
+                  Operations
+                </span>
+              </h2>
+              <p className="text-xl text-gray-400 max-w-3xl mx-auto">
+                Professional journey through elite cybersecurity operations and advanced penetration testing
+                engagements.
+              </p>
+            </div>
+            <div className="space-y-8">
+              {experiences.map((exp, index) => (
+                <Card
+                  key={exp.id}
+                  className="bg-gradient-to-br from-gray-900/80 to-red-900/20 border border-red-700/30 hover:border-red-500/40 transition-all shadow-lg backdrop-blur-sm"
+                >
+                  <CardContent className="p-6">
+                    <div className="flex items-start justify-between">
+                      <div className="flex items-start space-x-4">
+                        <div className="p-3 bg-red-600/20 rounded-lg border border-red-500/30">
+                          <Briefcase className="h-6 w-6 text-red-400" />
+                        </div>
+                        <div>
+                          <h3 className="text-xl font-bold text-white">{exp.title}</h3>
+                          <p className="text-red-400 font-medium">{exp.company}</p>
+                          <p className="text-gray-400 mt-2">{exp.description}</p>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-gray-300 font-medium">{exp.period}</p>
+                        {exp.current && (
+                          <Badge className="bg-red-500/20 text-red-300 border-red-500/30 mt-2">Active</Badge>
+                        )}
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Services Section */}
       <section id="services" className="relative py-32 px-6">
         <div className="container mx-auto">
-          <div className="max-w-6xl mx-auto">
+          <div className="max-w-7xl mx-auto">
             <div className="text-center mb-20">
-              <h2 className="text-5xl font-bold mb-6">
-                <span className="bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">Services</span>
+              <h2 className="text-4xl font-bold mb-6">
+                <span className="text-white">Elite</span>
+                <span className="bg-gradient-to-r from-red-500 to-red-700 bg-clip-text text-transparent">
+                  {" "}
+                  Services
+                </span>
               </h2>
               <p className="text-xl text-gray-400 max-w-3xl mx-auto">
-                Comprehensive cybersecurity services to protect your digital assets and infrastructure.
+                Advanced cybersecurity services designed to breach defenses and fortify your digital infrastructure
+                against sophisticated threats.
               </p>
             </div>
             <div className="grid md:grid-cols-3 gap-8">
-              <Card className="group bg-gradient-to-br from-gray-900/50 to-black/50 backdrop-blur-xl border-gray-800/50 hover:border-red-500/30 transition-all duration-300">
+              <Card className="group bg-gradient-to-br from-gray-900/80 to-red-900/20 border border-red-700/30 hover:border-red-500/40 transition-all duration-300 shadow-lg backdrop-blur-sm">
                 <CardHeader>
-                  <div className="p-4 bg-red-500/10 rounded-2xl w-fit group-hover:bg-red-500/20 transition-colors">
-                    <Target className="h-8 w-8 text-red-400" />
+                  <div className="p-4 bg-red-600/20 rounded-lg w-fit group-hover:bg-red-500/30 transition-colors border border-red-500/30">
+                    <Target className="h-6 w-6 text-red-400" />
                   </div>
-                  <CardTitle className="text-xl text-white">Penetration Testing</CardTitle>
+                  <CardTitle className="text-xl text-white">Elite Penetration Testing</CardTitle>
                   <CardDescription className="text-gray-400">
-                    Comprehensive security assessments to identify vulnerabilities in your systems and applications.
+                    Advanced security assessments using cutting-edge techniques to identify critical vulnerabilities.
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <ul className="space-y-3 text-gray-300">
                     <li className="flex items-center">
                       <div className="w-2 h-2 bg-red-500 rounded-full mr-3"></div>
-                      Web Application Testing
+                      Advanced Web App Exploitation
                     </li>
                     <li className="flex items-center">
                       <div className="w-2 h-2 bg-red-500 rounded-full mr-3"></div>
-                      Network Infrastructure
+                      Network Infrastructure Breach
                     </li>
                     <li className="flex items-center">
                       <div className="w-2 h-2 bg-red-500 rounded-full mr-3"></div>
-                      Mobile Applications
+                      Mobile Application Testing
                     </li>
                   </ul>
                 </CardContent>
               </Card>
 
-              <Card className="group bg-gradient-to-br from-gray-900/50 to-black/50 backdrop-blur-xl border-gray-800/50 hover:border-blue-500/30 transition-all duration-300">
+              <Card className="group bg-gradient-to-br from-gray-900/80 to-red-900/20 border border-red-700/30 hover:border-red-500/40 transition-all duration-300 shadow-lg backdrop-blur-sm">
                 <CardHeader>
-                  <div className="p-4 bg-blue-500/10 rounded-2xl w-fit group-hover:bg-blue-500/20 transition-colors">
-                    <Search className="h-8 w-8 text-blue-400" />
+                  <div className="p-4 bg-red-600/20 rounded-lg w-fit group-hover:bg-red-500/30 transition-colors border border-red-500/30">
+                    <Search className="h-6 w-6 text-red-400" />
                   </div>
-                  <CardTitle className="text-xl text-white">Vulnerability Assessment</CardTitle>
+                  <CardTitle className="text-xl text-white">Zero-Day Research</CardTitle>
                   <CardDescription className="text-gray-400">
-                    Systematic evaluation of security weaknesses in your IT infrastructure and applications.
+                    Advanced vulnerability research and zero-day discovery using innovative testing methodologies.
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <ul className="space-y-3 text-gray-300">
                     <li className="flex items-center">
-                      <div className="w-2 h-2 bg-blue-500 rounded-full mr-3"></div>
-                      Automated Scanning
+                      <div className="w-2 h-2 bg-red-500 rounded-full mr-3"></div>
+                      Advanced Fuzzing Techniques
                     </li>
                     <li className="flex items-center">
-                      <div className="w-2 h-2 bg-blue-500 rounded-full mr-3"></div>
-                      Manual Testing
+                      <div className="w-2 h-2 bg-red-500 rounded-full mr-3"></div>
+                      Exploit Development
                     </li>
                     <li className="flex items-center">
-                      <div className="w-2 h-2 bg-blue-500 rounded-full mr-3"></div>
-                      Risk Assessment
+                      <div className="w-2 h-2 bg-red-500 rounded-full mr-3"></div>
+                      Critical Risk Assessment
                     </li>
                   </ul>
                 </CardContent>
               </Card>
 
-              <Card className="group bg-gradient-to-br from-gray-900/50 to-black/50 backdrop-blur-xl border-gray-800/50 hover:border-green-500/30 transition-all duration-300">
+              <Card className="group bg-gradient-to-br from-gray-900/80 to-red-900/20 border border-red-700/30 hover:border-red-500/40 transition-all duration-300 shadow-lg backdrop-blur-sm">
                 <CardHeader>
-                  <div className="p-4 bg-green-500/10 rounded-2xl w-fit group-hover:bg-green-500/20 transition-colors">
-                    <Lock className="h-8 w-8 text-green-400" />
+                  <div className="p-4 bg-red-600/20 rounded-lg w-fit group-hover:bg-red-500/30 transition-colors border border-red-500/30">
+                    <Lock className="h-6 w-6 text-red-400" />
                   </div>
-                  <CardTitle className="text-xl text-white">Security Consulting</CardTitle>
+                  <CardTitle className="text-xl text-white">Security Architecture</CardTitle>
                   <CardDescription className="text-gray-400">
-                    Expert guidance on security best practices and compliance requirements.
+                    Elite guidance on advanced security implementations and threat modeling strategies.
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <ul className="space-y-3 text-gray-300">
                     <li className="flex items-center">
-                      <div className="w-2 h-2 bg-green-500 rounded-full mr-3"></div>
-                      Security Architecture
+                      <div className="w-2 h-2 bg-red-500 rounded-full mr-3"></div>
+                      Advanced Threat Modeling
                     </li>
                     <li className="flex items-center">
-                      <div className="w-2 h-2 bg-green-500 rounded-full mr-3"></div>
-                      Compliance Audits
+                      <div className="w-2 h-2 bg-red-500 rounded-full mr-3"></div>
+                      Elite Security Design
                     </li>
                     <li className="flex items-center">
-                      <div className="w-2 h-2 bg-green-500 rounded-full mr-3"></div>
-                      Training & Awareness
+                      <div className="w-2 h-2 bg-red-500 rounded-full mr-3"></div>
+                      Advanced Training Programs
                     </li>
                   </ul>
                 </CardContent>
@@ -612,15 +835,17 @@ Sent from Ye Yint Thu's Portfolio Contact Form
       {/* Latest Blog Posts */}
       <section className="relative py-32 px-6">
         <div className="container mx-auto">
-          <div className="max-w-6xl mx-auto">
+          <div className="max-w-7xl mx-auto">
             <div className="text-center mb-20">
-              <h2 className="text-5xl font-bold mb-6">
-                <span className="bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">
-                  Latest Insights
+              <h2 className="text-4xl font-bold mb-6">
+                <span className="text-white">Elite</span>
+                <span className="bg-gradient-to-r from-red-500 to-red-700 bg-clip-text text-transparent">
+                  {" "}
+                  Intelligence
                 </span>
               </h2>
               <p className="text-xl text-gray-400 max-w-3xl mx-auto">
-                Recent articles on cybersecurity, penetration testing, and security research.
+                Advanced cybersecurity intelligence, penetration testing methodologies, and elite security research.
               </p>
             </div>
             {posts.length > 0 ? (
@@ -628,7 +853,7 @@ Sent from Ye Yint Thu's Portfolio Contact Form
                 {posts.map((post) => (
                   <Card
                     key={post.id}
-                    className="group bg-gradient-to-br from-gray-900/50 to-black/50 backdrop-blur-xl border-gray-800/50 hover:border-gray-700/50 transition-all duration-300 overflow-hidden"
+                    className="group bg-gradient-to-br from-gray-900/80 to-red-900/20 border border-red-700/30 hover:border-red-500/40 transition-all duration-300 overflow-hidden shadow-lg backdrop-blur-sm"
                   >
                     <div className="aspect-video overflow-hidden">
                       <img
@@ -664,7 +889,7 @@ Sent from Ye Yint Thu's Portfolio Contact Form
                           href={`/blog/${post.slug}`}
                           className="text-red-400 hover:text-red-300 text-sm font-medium group"
                         >
-                          Read More
+                          Access Intel
                           <ArrowRight className="ml-1 h-3 w-3 inline group-hover:translate-x-1 transition-transform" />
                         </Link>
                       </div>
@@ -674,16 +899,16 @@ Sent from Ye Yint Thu's Portfolio Contact Form
               </div>
             ) : (
               <div className="text-center py-20">
-                <BookOpen className="h-20 w-20 text-gray-700 mx-auto mb-6" />
-                <p className="text-gray-400 text-xl">No blog posts available yet.</p>
-                <p className="text-gray-600 text-sm mt-2">Check back soon for cybersecurity insights and tutorials.</p>
+                <BookOpen className="h-16 w-16 text-gray-700 mx-auto mb-6" />
+                <p className="text-gray-400 text-xl">Elite intelligence classified.</p>
+                <p className="text-gray-600 text-sm mt-2">Access pending authorization clearance.</p>
               </div>
             )}
             <div className="text-center mt-16">
               <Link href="/blog">
-                <Button className="bg-gradient-to-r from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white px-8 py-4 text-lg">
+                <Button className="bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white px-8 py-2 text-lg shadow-lg shadow-red-500/25">
                   <BookOpen className="mr-2 h-5 w-5" />
-                  View All Posts
+                  Access Full Intel
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
               </Link>
@@ -695,28 +920,28 @@ Sent from Ye Yint Thu's Portfolio Contact Form
       {/* Contact Section */}
       <section id="contact" className="relative py-32 px-6">
         <div className="container mx-auto">
-          <div className="max-w-6xl mx-auto">
+          <div className="max-w-7xl mx-auto">
             <div className="text-center mb-20">
-              <h2 className="text-5xl font-bold mb-6">
-                <span className="bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">
-                  Get In Touch
-                </span>
+              <h2 className="text-4xl font-bold mb-6">
+                <span className="text-white">Initiate</span>
+                <span className="bg-gradient-to-r from-red-500 to-red-700 bg-clip-text text-transparent"> Contact</span>
               </h2>
               <p className="text-xl text-gray-400 max-w-3xl mx-auto">
-                Ready to secure your digital assets? Let's discuss your cybersecurity needs.
+                Ready to deploy elite cybersecurity services? Initiate secure communication channel to discuss your
+                digital defense requirements.
               </p>
             </div>
             <div className="grid lg:grid-cols-2 gap-16">
               <div className="space-y-8">
                 <div>
-                  <h3 className="text-3xl font-bold text-white mb-8">Contact Information</h3>
+                  <h3 className="text-2xl font-bold text-white mb-8">Elite Contact Channels</h3>
                   <div className="space-y-6">
                     <div className="flex items-center space-x-4">
-                      <div className="p-4 bg-red-500/10 rounded-2xl border border-red-500/20">
+                      <div className="p-4 bg-red-600/20 rounded-lg border border-red-500/30">
                         <Mail className="h-6 w-6 text-red-400" />
                       </div>
                       <div>
-                        <p className="text-gray-300 font-medium text-lg">Email</p>
+                        <p className="text-gray-300 font-medium text-lg">Secure Email</p>
                         <a
                           href="mailto:yeyintthu.mst@gmail.com"
                           className="text-gray-400 hover:text-red-400 transition-colors"
@@ -726,74 +951,74 @@ Sent from Ye Yint Thu's Portfolio Contact Form
                       </div>
                     </div>
                     <div className="flex items-center space-x-4">
-                      <div className="p-4 bg-blue-500/10 rounded-2xl border border-blue-500/20">
-                        <MapPin className="h-6 w-6 text-blue-400" />
+                      <div className="p-4 bg-red-600/20 rounded-lg border border-red-500/30">
+                        <MapPin className="h-6 w-6 text-red-400" />
                       </div>
                       <div>
-                        <p className="text-gray-300 font-medium text-lg">Location</p>
-                        <p className="text-gray-400">Available for Remote Work</p>
+                        <p className="text-gray-300 font-medium text-lg">Operational Zone</p>
+                        <p className="text-gray-400">Global Remote Operations</p>
                       </div>
                     </div>
                     <div className="flex items-center space-x-4">
-                      <div className="p-4 bg-green-500/10 rounded-2xl border border-green-500/20">
-                        <Users className="h-6 w-6 text-green-400" />
+                      <div className="p-4 bg-red-600/20 rounded-lg border border-red-500/30">
+                        <Users className="h-6 w-6 text-red-400" />
                       </div>
                       <div>
-                        <p className="text-gray-300 font-medium text-lg">Organization</p>
+                        <p className="text-gray-300 font-medium text-lg">Elite Division</p>
                         <a
                           href="https://www.offsecinitiative.net"
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-gray-400 hover:text-green-400 transition-colors"
+                          className="text-gray-400 hover:text-red-400 transition-colors"
                         >
-                          OSI Team Member
+                          OSI Elite Member
                         </a>
                       </div>
                     </div>
                   </div>
                 </div>
                 <div>
-                  <h4 className="text-xl font-semibold text-white mb-6">Follow Me</h4>
+                  <h4 className="text-xl font-bold text-white mb-6">Elite Network</h4>
                   <div className="flex space-x-4">
                     <a
                       href="https://github.com"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="p-4 bg-gray-900/50 border border-gray-800 rounded-2xl hover:bg-gray-800 hover:border-gray-700 transition-all group"
+                      className="p-4 bg-gray-900/50 border border-gray-700 rounded-lg hover:bg-red-500/10 hover:border-red-500/30 transition-all group"
                     >
-                      <Github className="h-6 w-6 text-gray-400 group-hover:text-white" />
+                      <Github className="h-6 w-6 text-gray-400 group-hover:text-red-400" />
                     </a>
                     <a
                       href="https://www.linkedin.com/in/ye-yint-thu-5a808a278/"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="p-4 bg-gray-900/50 border border-gray-800 rounded-2xl hover:bg-gray-800 hover:border-gray-700 transition-all group"
+                      className="p-4 bg-gray-900/50 border border-gray-700 rounded-lg hover:bg-red-500/10 hover:border-red-500/30 transition-all group"
                     >
-                      <Linkedin className="h-6 w-6 text-gray-400 group-hover:text-white" />
+                      <Linkedin className="h-6 w-6 text-gray-400 group-hover:text-red-400" />
                     </a>
                     <a
                       href="https://app.hackthebox.com/users/1644532"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="p-4 bg-gray-900/50 border border-gray-800 rounded-2xl hover:bg-gray-800 hover:border-gray-700 transition-all group"
+                      className="p-4 bg-gray-900/50 border border-gray-700 rounded-lg hover:bg-red-500/10 hover:border-red-500/30 transition-all group"
                     >
-                      <Target className="h-6 w-6 text-gray-400 group-hover:text-white" />
+                      <Target className="h-6 w-6 text-gray-400 group-hover:text-red-400" />
                     </a>
                   </div>
                 </div>
               </div>
-              <Card className="bg-gradient-to-br from-gray-900/50 to-black/50 backdrop-blur-xl border-gray-800/50">
+              <Card className="bg-gradient-to-br from-gray-900/80 to-red-900/20 border border-red-700/30 shadow-lg backdrop-blur-sm">
                 <CardHeader>
-                  <CardTitle className="text-2xl text-white">Send a Message</CardTitle>
+                  <CardTitle className="text-2xl text-white">Secure Communication</CardTitle>
                   <CardDescription className="text-gray-400">
-                    Interested in cybersecurity services? Let's start a conversation.
+                    Initiate encrypted communication channel for elite cybersecurity services.
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
                   {submitStatus === "success" && (
-                    <div className="mb-6 p-4 bg-green-500/10 border border-green-500/20 rounded-xl">
-                      <p className="text-green-400 text-sm">
-                        Your email client should have opened. If not, please send an email directly to{" "}
+                    <div className="mb-6 p-4 bg-red-500/10 border border-red-500/20 rounded-lg">
+                      <p className="text-red-400 text-sm">
+                        Secure channel established. If email client failed to open, contact directly at{" "}
                         <a href="mailto:yeyintthu.mst@gmail.com" className="underline">
                           yeyintthu.mst@gmail.com
                         </a>
@@ -801,9 +1026,9 @@ Sent from Ye Yint Thu's Portfolio Contact Form
                     </div>
                   )}
                   {submitStatus === "error" && (
-                    <div className="mb-6 p-4 bg-red-500/10 border border-red-500/20 rounded-xl">
+                    <div className="mb-6 p-4 bg-red-500/10 border border-red-500/20 rounded-lg">
                       <p className="text-red-400 text-sm">
-                        There was an error. Please send an email directly to{" "}
+                        Communication error. Use direct secure channel:{" "}
                         <a href="mailto:yeyintthu.mst@gmail.com" className="underline">
                           yeyintthu.mst@gmail.com
                         </a>
@@ -819,7 +1044,7 @@ Sent from Ye Yint Thu's Portfolio Contact Form
                           name="firstName"
                           value={formData.firstName}
                           onChange={handleInputChange}
-                          className="w-full px-4 py-3 bg-gray-900/50 border border-gray-800 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                          className="w-full px-4 py-3 bg-gray-900/50 border border-red-700/30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
                           placeholder="John"
                           required
                         />
@@ -831,7 +1056,7 @@ Sent from Ye Yint Thu's Portfolio Contact Form
                           name="lastName"
                           value={formData.lastName}
                           onChange={handleInputChange}
-                          className="w-full px-4 py-3 bg-gray-900/50 border border-gray-800 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                          className="w-full px-4 py-3 bg-gray-900/50 border border-red-700/30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
                           placeholder="Doe"
                           required
                         />
@@ -844,7 +1069,7 @@ Sent from Ye Yint Thu's Portfolio Contact Form
                         name="email"
                         value={formData.email}
                         onChange={handleInputChange}
-                        className="w-full px-4 py-3 bg-gray-900/50 border border-gray-800 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                        className="w-full px-4 py-3 bg-gray-900/50 border border-red-700/30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
                         placeholder="john@example.com"
                         required
                       />
@@ -856,8 +1081,8 @@ Sent from Ye Yint Thu's Portfolio Contact Form
                         name="subject"
                         value={formData.subject}
                         onChange={handleInputChange}
-                        className="w-full px-4 py-3 bg-gray-900/50 border border-gray-800 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
-                        placeholder="Security Assessment Inquiry"
+                        className="w-full px-4 py-3 bg-gray-900/50 border border-red-700/30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                        placeholder="Elite Security Assessment Request"
                         required
                       />
                     </div>
@@ -868,25 +1093,25 @@ Sent from Ye Yint Thu's Portfolio Contact Form
                         name="message"
                         value={formData.message}
                         onChange={handleInputChange}
-                        className="w-full px-4 py-3 bg-gray-900/50 border border-gray-800 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent resize-none"
-                        placeholder="Tell me about your cybersecurity needs..."
+                        className="w-full px-4 py-3 bg-gray-900/50 border border-red-700/30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent resize-none"
+                        placeholder="Describe your elite cybersecurity requirements..."
                         required
                       />
                     </div>
                     <Button
                       type="submit"
                       disabled={isSubmitting}
-                      className="w-full bg-gradient-to-r from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white py-4 text-lg disabled:opacity-50"
+                      className="w-full bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white py-3 disabled:opacity-50 shadow-lg shadow-red-500/25"
                     >
                       {isSubmitting ? (
                         <div className="flex items-center justify-center">
                           <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
-                          Sending...
+                          Establishing Connection...
                         </div>
                       ) : (
                         <>
                           <Send className="mr-2 h-5 w-5" />
-                          Send Message
+                          Initiate Secure Contact
                           <ArrowRight className="ml-2 h-4 w-4" />
                         </>
                       )}
@@ -900,10 +1125,10 @@ Sent from Ye Yint Thu's Portfolio Contact Form
       </section>
 
       {/* Footer */}
-      <footer className="relative border-t border-gray-800/50 bg-black/80 backdrop-blur-xl py-12 px-6">
+      <footer className="relative border-t border-red-900/30 bg-black/90 backdrop-blur-xl py-8 px-6">
         <div className="container mx-auto text-center">
           <p className="text-gray-500">
-            © {new Date().getFullYear()} Ye Yint Thu. All rights reserved. | Cybersecurity Professional
+            © {new Date().getFullYear()} Ye Yint Thu - jrBX4. All rights reserved. | Elite Cybersecurity Operations
           </p>
         </div>
       </footer>

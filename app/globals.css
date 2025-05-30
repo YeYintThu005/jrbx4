@@ -74,16 +74,16 @@
 }
 
 ::-webkit-scrollbar-track {
-  background: rgb(30 41 59);
+  background: rgb(17 24 39);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgb(71 85 105);
+  background: rgb(59 130 246);
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgb(100 116 139);
+  background: rgb(37 99 235);
 }
 
 /* Animation for floating elements */
@@ -93,7 +93,7 @@
     transform: translateY(0px);
   }
   50% {
-    transform: translateY(-20px);
+    transform: translateY(-10px);
   }
 }
 
@@ -103,15 +103,15 @@
 
 /* Gradient text effect */
 .gradient-text {
-  background: linear-gradient(135deg, #ef4444, #dc2626);
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
-/* Glow effect */
-.glow {
-  box-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
+/* Subtle glow effect */
+.subtle-glow {
+  box-shadow: 0 0 15px rgba(59, 130, 246, 0.2);
 }
 
 /* Card hover effects */
@@ -121,14 +121,14 @@
 
 .card-hover:hover {
   transform: translateY(-5px);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
 }
 
 /* Loading spinner */
 .spinner {
-  border: 2px solid rgba(239, 68, 68, 0.3);
+  border: 2px solid rgba(59, 130, 246, 0.3);
   border-radius: 50%;
-  border-top: 2px solid #ef4444;
+  border-top: 2px solid #3b82f6;
   width: 20px;
   height: 20px;
   animation: spin 1s linear infinite;
@@ -145,12 +145,12 @@
 
 /* Prose styles for markdown content */
 .prose {
-  color: rgb(203 213 225);
+  color: rgb(209 213 219);
   max-width: none;
 }
 
 .prose h1 {
-  color: rgb(248 250 252);
+  color: rgb(255 255 255);
   font-weight: 700;
   font-size: 2.25rem;
   line-height: 2.5rem;
@@ -159,7 +159,7 @@
 }
 
 .prose h2 {
-  color: rgb(248 250 252);
+  color: rgb(255 255 255);
   font-weight: 600;
   font-size: 1.875rem;
   line-height: 2.25rem;
@@ -168,7 +168,7 @@
 }
 
 .prose h3 {
-  color: rgb(248 250 252);
+  color: rgb(255 255 255);
   font-weight: 600;
   font-size: 1.5rem;
   line-height: 2rem;
@@ -182,8 +182,8 @@
 }
 
 .prose code {
-  background-color: rgb(51 65 85);
-  color: rgb(248 113 113);
+  background-color: rgb(31 41 55);
+  color: rgb(59 130 246);
   padding: 0.125rem 0.25rem;
   border-radius: 0.25rem;
   font-size: 0.875rem;
@@ -191,13 +191,13 @@
 }
 
 .prose pre {
-  background-color: rgb(30 41 59);
-  color: rgb(134 239 172);
+  background-color: rgb(31 41 55);
+  color: rgb(209 213 219);
   padding: 1.5rem;
   border-radius: 0.5rem;
   overflow-x: auto;
   margin: 1.5rem 0;
-  border: 1px solid rgb(71 85 105);
+  border: 1px solid rgb(55 65 81);
 }
 
 .prose pre code {
@@ -209,21 +209,21 @@
 }
 
 .prose a {
-  color: rgb(248 113 113);
+  color: rgb(59 130 246);
   text-decoration: underline;
 }
 
 .prose a:hover {
-  color: rgb(252 165 165);
+  color: rgb(96 165 250);
 }
 
 .prose strong {
-  color: rgb(248 250 252);
+  color: rgb(255 255 255);
   font-weight: 600;
 }
 
 .prose em {
-  color: rgb(203 213 225);
+  color: rgb(209 213 219);
   font-style: italic;
 }
 
@@ -245,14 +245,14 @@
 
 .prose img {
   border-radius: 0.5rem;
-  border: 1px solid rgb(71 85 105);
+  border: 1px solid rgb(55 65 81);
   margin: 1.5rem auto;
   max-width: 100%;
   height: auto;
 }
 
 .prose blockquote {
-  border-left: 4px solid rgb(248 113 113);
+  border-left: 4px solid rgb(59 130 246);
   padding-left: 1rem;
   margin: 1.5rem 0;
   font-style: italic;
@@ -267,17 +267,17 @@
 
 .prose th,
 .prose td {
-  border: 1px solid rgb(71 85 105);
+  border: 1px solid rgb(55 65 81);
   padding: 0.75rem;
   text-align: left;
 }
 
 .prose th {
-  background-color: rgb(51 65 85);
-  color: rgb(248 250 252);
+  background-color: rgb(31 41 55);
+  color: rgb(255 255 255);
   font-weight: 600;
 }
 
 .prose td {
-  background-color: rgb(30 41 59);
+  background-color: rgb(17 24 39);
 }
