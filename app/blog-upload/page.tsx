@@ -660,7 +660,7 @@ Elite penetration testing requires continuous learning and adaptation to emergin
                   type="password"
                   value={currentPassword}
                   onChange={(e) => setCurrentPassword(e.target.value)}
-                  className="w-full px-4 py-3 bg-gray-900/50 border border-red-500/30 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-red-500 backdrop-blur-sm"
+                  className="w-full px-4 py-3 bg-black/50 border border-red-900/30 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-red-500 backdrop-blur-sm"
                 />
               </div>
 
@@ -670,7 +670,7 @@ Elite penetration testing requires continuous learning and adaptation to emergin
                   type="password"
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
-                  className="w-full px-4 py-3 bg-gray-900/50 border border-red-500/30 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-red-500 backdrop-blur-sm"
+                  className="w-full px-4 py-3 bg-black/50 border border-red-900/30 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-red-500 backdrop-blur-sm"
                 />
               </div>
 
@@ -680,7 +680,7 @@ Elite penetration testing requires continuous learning and adaptation to emergin
                   type="password"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="w-full px-4 py-3 bg-gray-900/50 border border-red-500/30 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-red-500 backdrop-blur-sm"
+                  className="w-full px-4 py-3 bg-black/50 border border-red-900/30 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-red-500 backdrop-blur-sm"
                 />
               </div>
 
@@ -726,28 +726,28 @@ Elite penetration testing requires continuous learning and adaptation to emergin
         <div className="container mx-auto">
           <div className="max-w-6xl mx-auto">
             <div className="grid md:grid-cols-4 gap-6">
-              <Card className="bg-gradient-to-br from-gray-900/50 to-red-900/30 backdrop-blur-xl border-red-500/30">
+              <Card className="bg-black/50 border border-red-900/30 backdrop-blur-xl">
                 <CardContent className="p-6 text-center">
                   <FileText className="h-8 w-8 text-red-500 mx-auto mb-2" />
                   <p className="text-2xl font-bold text-white">{posts.length}</p>
                   <p className="text-sm text-gray-400">Intel Reports</p>
                 </CardContent>
               </Card>
-              <Card className="bg-gradient-to-br from-gray-900/50 to-red-900/30 backdrop-blur-xl border-red-500/30">
+              <Card className="bg-black/50 border border-red-900/30 backdrop-blur-xl">
                 <CardContent className="p-6 text-center">
                   <Award className="h-8 w-8 text-red-500 mx-auto mb-2" />
                   <p className="text-2xl font-bold text-white">{certifications.length}</p>
                   <p className="text-sm text-gray-400">Elite Certs</p>
                 </CardContent>
               </Card>
-              <Card className="bg-gradient-to-br from-gray-900/50 to-red-900/30 backdrop-blur-xl border-red-500/30">
+              <Card className="bg-black/50 border border-red-900/30 backdrop-blur-xl">
                 <CardContent className="p-6 text-center">
                   <Briefcase className="h-8 w-8 text-red-500 mx-auto mb-2" />
                   <p className="text-2xl font-bold text-white">{experiences.length}</p>
                   <p className="text-sm text-gray-400">Operations</p>
                 </CardContent>
               </Card>
-              <Card className="bg-gradient-to-br from-gray-900/50 to-red-900/30 backdrop-blur-xl border-red-500/30">
+              <Card className="bg-black/50 border border-red-900/30 backdrop-blur-xl">
                 <CardContent className="p-6 text-center">
                   <ImageIcon className="h-8 w-8 text-red-500 mx-auto mb-2" />
                   <p className="text-2xl font-bold text-white">{uploadedImages.length}</p>
@@ -766,7 +766,7 @@ Elite penetration testing requires continuous learning and adaptation to emergin
             {/* Blog Management */}
             <div className="grid lg:grid-cols-2 gap-8">
               {/* Create New Post */}
-              <Card className="bg-gradient-to-br from-gray-900/50 to-red-900/30 backdrop-blur-xl border-red-500/30">
+              <Card className="bg-black/50 border border-red-900/30 backdrop-blur-xl">
                 <CardHeader>
                   <CardTitle className="text-white flex items-center">
                     <Plus className="mr-2 h-5 w-5" />
@@ -784,7 +784,7 @@ Elite penetration testing requires continuous learning and adaptation to emergin
                       value={postTitle}
                       onChange={(e) => setPostTitle(e.target.value)}
                       placeholder="Enter report title..."
-                      className="w-full px-4 py-3 bg-gray-900/50 border border-red-500/30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500 backdrop-blur-sm"
+                      className="w-full px-4 py-3 bg-black/50 border border-red-900/30 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-red-500 backdrop-blur-sm"
                     />
                   </div>
 
@@ -794,7 +794,7 @@ Elite penetration testing requires continuous learning and adaptation to emergin
                       <select
                         value={postCategory}
                         onChange={(e) => setPostCategory(e.target.value)}
-                        className="w-full px-4 py-3 bg-gray-900/50 border border-red-500/30 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-red-500 backdrop-blur-sm"
+                        className="w-full px-4 py-3 bg-black/50 border border-red-900/30 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-red-500 backdrop-blur-sm"
                       >
                         <option value="">Select classification...</option>
                         <option value="Web Security">Web Security</option>
@@ -810,7 +810,7 @@ Elite penetration testing requires continuous learning and adaptation to emergin
                       <select
                         value={postStatus}
                         onChange={(e) => setPostStatus(e.target.value)}
-                        className="w-full px-4 py-3 bg-gray-900/50 border border-red-500/30 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-red-500 backdrop-blur-sm"
+                        className="w-full px-4 py-3 bg-black/50 border border-red-900/30 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-red-500 backdrop-blur-sm"
                       >
                         <option value="draft">Classified</option>
                         <option value="published">Declassified</option>
@@ -838,7 +838,7 @@ Elite penetration testing requires continuous learning and adaptation to emergin
                         </Button>
                       </div>
                     )}
-                    <div className="border-2 border-dashed border-red-500/30 rounded-lg p-6 text-center hover:border-red-400/50 transition-colors cursor-pointer">
+                    <div className="border-2 border-dashed border-red-900/30 rounded-lg p-6 text-center hover:border-red-400/50 transition-colors cursor-pointer">
                       <Upload className="mx-auto h-12 w-12 text-gray-500 mb-4" />
                       <p className="text-gray-400 mb-2">Drop image here or click to upload</p>
                       <input
@@ -902,7 +902,7 @@ Elite penetration testing requires continuous learning and adaptation to emergin
                           value={markdownContent || sampleMarkdown}
                           onChange={(e) => setMarkdownContent(e.target.value)}
                           placeholder="Write your intel report in Markdown format..."
-                          className="w-full px-4 py-3 bg-gray-900/50 border border-red-500/30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500 resize-none font-mono text-sm backdrop-blur-sm"
+                          className="w-full px-4 py-3 bg-gray-900/50 border border-red-500/30 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-red-500 resize-none font-mono text-sm backdrop-blur-sm"
                         />
                         <div className="absolute top-2 right-2">
                           <Badge variant="secondary" className="bg-red-500/20 text-red-300 border-red-500/30 text-xs">
@@ -954,7 +954,7 @@ Elite penetration testing requires continuous learning and adaptation to emergin
               </Card>
 
               {/* Manage Existing Posts */}
-              <Card className="bg-gradient-to-br from-gray-900/50 to-red-900/30 backdrop-blur-xl border-red-500/30">
+              <Card className="bg-black/50 border border-red-900/30 backdrop-blur-xl">
                 <CardHeader>
                   <CardTitle className="text-white flex items-center">
                     <FileText className="mr-2 h-5 w-5" />
@@ -969,7 +969,7 @@ Elite penetration testing requires continuous learning and adaptation to emergin
                     {posts.map((post: any) => (
                       <div
                         key={post.id}
-                        className="flex items-center justify-between p-4 bg-gray-900/30 rounded-lg border border-red-500/20"
+                        className="flex items-center justify-between p-4 bg-black/50 rounded-lg border border-red-900/30"
                       >
                         <div className="flex-1">
                           <h4 className="text-white font-medium">{post.title}</h4>
@@ -1034,7 +1034,7 @@ Elite penetration testing requires continuous learning and adaptation to emergin
             {/* Certifications & Experience Management */}
             <div className="grid lg:grid-cols-2 gap-8">
               {/* Certifications Management */}
-              <Card className="bg-gradient-to-br from-gray-900/50 to-red-900/30 backdrop-blur-xl border-red-500/30">
+              <Card className="bg-black/50 border border-red-900/30 backdrop-blur-xl">
                 <CardHeader>
                   <CardTitle className="text-white flex items-center">
                     <Award className="mr-2 h-5 w-5" />
@@ -1122,7 +1122,7 @@ Elite penetration testing requires continuous learning and adaptation to emergin
               </Card>
 
               {/* Experience Management */}
-              <Card className="bg-gradient-to-br from-gray-900/50 to-red-900/30 backdrop-blur-xl border-red-500/30">
+              <Card className="bg-black/50 border border-red-900/30 backdrop-blur-xl">
                 <CardHeader>
                   <CardTitle className="text-white flex items-center">
                     <Briefcase className="mr-2 h-5 w-5" />
@@ -1222,7 +1222,7 @@ Elite penetration testing requires continuous learning and adaptation to emergin
             {/* Profile & Resume Management */}
             <div className="grid lg:grid-cols-2 gap-8">
               {/* Profile Image Management */}
-              <Card className="bg-gradient-to-br from-gray-900/50 to-red-900/30 backdrop-blur-xl border-red-500/30">
+              <Card className="bg-black/50 border border-red-900/30 backdrop-blur-xl">
                 <CardHeader>
                   <CardTitle className="text-white flex items-center">
                     <User className="mr-2 h-5 w-5" />
@@ -1280,7 +1280,7 @@ Elite penetration testing requires continuous learning and adaptation to emergin
               </Card>
 
               {/* Resume Management */}
-              <Card className="bg-gradient-to-br from-gray-900/50 to-red-900/30 backdrop-blur-xl border-red-500/30">
+              <Card className="bg-black/50 border border-red-900/30 backdrop-blur-xl">
                 <CardHeader>
                   <CardTitle className="text-white flex items-center">
                     <FileText className="mr-2 h-5 w-5" />
@@ -1356,7 +1356,7 @@ Elite penetration testing requires continuous learning and adaptation to emergin
             </div>
 
             {/* Media Library */}
-            <Card className="bg-gradient-to-br from-gray-900/50 to-red-900/30 backdrop-blur-xl border-red-500/30">
+            <Card className="bg-black/50 border border-red-900/30 backdrop-blur-xl">
               <CardHeader>
                 <CardTitle className="text-white flex items-center">
                   <ImageIcon className="mr-2 h-5 w-5" />
