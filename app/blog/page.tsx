@@ -4,7 +4,7 @@ import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Shield, ArrowLeft, Search } from "lucide-react"
+import { Shield, ArrowLeft, Search, Skull } from "lucide-react"
 import Link from "next/link"
 
 interface BlogPost {
@@ -282,46 +282,121 @@ Once on the system, enumeration revealed a SUID binary with a path traversal vul
   const getCategoryColor = (category: string) => {
     switch (category) {
       case "Web Security":
-        return "bg-red-900/30 text-red-300 border-red-700"
+        return "bg-red-500/20 text-red-300 border-red-500/30"
       case "Network Security":
-        return "bg-blue-900/30 text-blue-300 border-blue-700"
+        return "bg-red-600/20 text-red-400 border-red-600/30"
       case "CTF Writeup":
-        return "bg-green-900/30 text-green-300 border-green-700"
+        return "bg-red-700/20 text-red-200 border-red-700/30"
       case "Cloud Security":
-        return "bg-orange-900/30 text-orange-300 border-orange-700"
+        return "bg-red-800/20 text-red-300 border-red-800/30"
       case "Tools & Techniques":
-        return "bg-purple-900/30 text-purple-300 border-purple-700"
+        return "bg-gray-700/20 text-gray-300 border-gray-700/30"
       case "Research":
-        return "bg-indigo-900/30 text-indigo-300 border-indigo-700"
+        return "bg-gray-600/20 text-gray-300 border-gray-600/30"
       default:
-        return "bg-gray-900/30 text-gray-300 border-gray-700"
+        return "bg-gray-500/20 text-gray-300 border-gray-500/30"
     }
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+    <div className="min-h-screen bg-black text-white relative overflow-hidden">
+      {/* Animated Background */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        {/* Moving red particles */}
+        <div className="absolute inset-0">
+          {[...Array(20)].map((_, i) => (
+            <div
+              key={i}
+              className="absolute w-2 h-2 bg-red-500 rounded-full opacity-30 animate-pulse"
+              style={{
+                left: `${Math.random() * 100}%`,
+                top: `${Math.random() * 100}%`,
+                animationDelay: `${Math.random() * 3}s`,
+                animationDuration: `${3 + Math.random() * 2}s`,
+              }}
+            />
+          ))}
+        </div>
+
+        {/* Moving gradient orbs */}
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-gradient-to-r from-red-600/20 to-red-800/20 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-gradient-to-r from-red-500/15 to-red-700/15 rounded-full blur-3xl animate-pulse delay-1000"></div>
+
+        {/* Flowing lines animation */}
+        <div className="absolute inset-0 opacity-10">
+          <svg className="w-full h-full">
+            <defs>
+              <linearGradient id="redGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#dc2626" />
+                <stop offset="100%" stopColor="#991b1b" />
+              </linearGradient>
+            </defs>
+            <path
+              d="M0,100 Q400,50 800,100 T1600,100"
+              stroke="url(#redGradient)"
+              strokeWidth="2"
+              fill="none"
+              className="animate-pulse"
+            />
+            <path
+              d="M0,200 Q600,150 1200,200 T2400,200"
+              stroke="url(#redGradient)"
+              strokeWidth="1"
+              fill="none"
+              className="animate-pulse"
+              style={{ animationDelay: "1s" }}
+            />
+          </svg>
+        </div>
+      </div>
+
       {/* Header */}
-      <header className="border-b border-slate-700 bg-slate-900/50 backdrop-blur-sm sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-4">
+      <header className="relative z-50 border-b border-red-900/30 bg-black/90 backdrop-blur-xl sticky top-0">
+        <div className="container mx-auto px-6 py-4">
           <nav className="flex items-center justify-between">
-            <div className="flex items-center space-x-2">
-              <Shield className="h-8 w-8 text-red-500" />
-              <span className="text-xl font-bold text-white">Ye Yint Thu</span>
+            <div className="flex items-center space-x-4">
+              {/* jrBX4 Logo */}
+              <div className="relative group">
+                <div className="flex items-center space-x-3 p-3 bg-gradient-to-r from-red-900/40 to-black/60 rounded-lg border border-red-600/40 shadow-lg backdrop-blur-sm">
+                  <div className="relative">
+                    <div className="p-2 bg-red-600/20 rounded-lg border border-red-500/30">
+                      <Skull className="h-7 w-7 text-red-400" />
+                    </div>
+                    <div className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
+                  </div>
+                  <div>
+                    <div className="text-xl font-bold bg-gradient-to-r from-red-400 to-red-600 bg-clip-text text-transparent">
+                      jrBX4
+                    </div>
+                    <div className="text-xs text-red-400 font-medium">Security Elite</div>
+                  </div>
+                </div>
+                <div className="absolute inset-0 bg-red-500/10 rounded-lg blur-md opacity-0 group-hover:opacity-100 transition-opacity"></div>
+              </div>
+              <div>
+                <span className="text-2xl font-bold bg-gradient-to-r from-white to-red-200 bg-clip-text text-transparent">
+                  Ye Yint Thu
+                </span>
+                <div className="text-xs text-red-400">Elite Penetration Tester</div>
+              </div>
             </div>
-            <div className="hidden md:flex space-x-6">
-              <Link href="/" className="text-slate-300 hover:text-white transition-colors">
+            <div className="hidden md:flex space-x-8">
+              <Link href="/" className="text-gray-300 hover:text-red-400 transition-colors">
                 Home
               </Link>
-              <Link href="/#about" className="text-slate-300 hover:text-white transition-colors">
+              <Link href="/#about" className="text-gray-300 hover:text-red-400 transition-colors">
                 About
               </Link>
-              <Link href="/#services" className="text-slate-300 hover:text-white transition-colors">
+              <Link href="/#experience" className="text-gray-300 hover:text-red-400 transition-colors">
+                Experience
+              </Link>
+              <Link href="/#services" className="text-gray-300 hover:text-red-400 transition-colors">
                 Services
               </Link>
-              <Link href="/blog" className="text-red-400 font-medium">
+              <Link href="/blog" className="text-red-400 font-medium hover:text-red-300 transition-colors">
                 Blog
               </Link>
-              <Link href="/#contact" className="text-slate-300 hover:text-white transition-colors">
+              <Link href="/#contact" className="text-gray-300 hover:text-red-400 transition-colors">
                 Contact
               </Link>
             </div>
@@ -330,10 +405,10 @@ Once on the system, enumeration revealed a SUID binary with a path traversal vul
       </header>
 
       {/* Hero Section */}
-      <section className="py-16 px-4">
+      <section className="py-32 px-6 relative z-10">
         <div className="container mx-auto">
           <div className="max-w-4xl mx-auto text-center">
-            <Link href="/" className="inline-flex items-center text-slate-400 hover:text-white transition-colors mb-6">
+            <Link href="/" className="inline-flex items-center text-gray-400 hover:text-white transition-colors mb-6">
               <ArrowLeft className="mr-2 h-4 w-4" />
               Back to Portfolio
             </Link>
@@ -341,7 +416,7 @@ Once on the system, enumeration revealed a SUID binary with a path traversal vul
               Security
               <span className="text-red-500 block">Insights</span>
             </h1>
-            <p className="text-xl text-slate-300 mb-8 max-w-2xl mx-auto">
+            <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
               Deep dives into cybersecurity, penetration testing techniques, and the latest security research.
             </p>
           </div>
@@ -349,25 +424,25 @@ Once on the system, enumeration revealed a SUID binary with a path traversal vul
       </section>
 
       {/* Search and Filter */}
-      <section className="py-8 px-4 bg-slate-800/30">
+      <section className="py-8 px-4 bg-black/30 backdrop-blur-sm border-y border-red-900/20">
         <div className="container mx-auto">
           <div className="max-w-4xl mx-auto">
             <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
               <div className="relative flex-1 max-w-md">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                 <input
                   type="text"
                   placeholder="Search articles..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 bg-slate-700 border border-slate-600 rounded-md text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-red-500"
+                  className="w-full pl-10 pr-4 py-2 bg-gray-900/70 border border-red-900/30 rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500"
                 />
               </div>
               <div className="flex items-center space-x-4">
                 <select
                   value={selectedCategory}
                   onChange={(e) => setSelectedCategory(e.target.value)}
-                  className="px-4 py-2 bg-slate-700 border border-slate-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-red-500"
+                  className="px-4 py-2 bg-gray-900/70 border border-red-900/30 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-red-500"
                 >
                   {categories.map((category) => (
                     <option key={category} value={category}>
@@ -387,7 +462,7 @@ Once on the system, enumeration revealed a SUID binary with a path traversal vul
           <div className="container mx-auto">
             <div className="max-w-6xl mx-auto">
               <h2 className="text-2xl font-bold text-white mb-8">Featured Article</h2>
-              <Card className="bg-slate-800/50 border-slate-700 overflow-hidden">
+              <Card className="bg-gray-900/50 border border-red-900/20 overflow-hidden hover:border-red-500/30 transition-colors">
                 <div className="md:flex">
                   <div className="md:w-1/3">
                     <img
@@ -401,12 +476,12 @@ Once on the system, enumeration revealed a SUID binary with a path traversal vul
                       <Badge variant="secondary" className={getCategoryColor(filteredPosts[0].category)}>
                         {filteredPosts[0].category}
                       </Badge>
-                      <span className="text-sm text-slate-400">{filteredPosts[0].date}</span>
+                      <span className="text-sm text-gray-400">{filteredPosts[0].date}</span>
                     </div>
                     <h3 className="text-2xl font-bold text-white mb-4">{filteredPosts[0].title}</h3>
-                    <p className="text-slate-300 mb-6">{filteredPosts[0].content.substring(0, 200)}...</p>
+                    <p className="text-gray-300 mb-6">{filteredPosts[0].content.substring(0, 200)}...</p>
                     <div className="flex items-center justify-between">
-                      <span className="text-sm text-slate-400">15 min read</span>
+                      <span className="text-sm text-gray-400">15 min read</span>
                       <Link href={`/blog/${filteredPosts[0].slug}`}>
                         <Button className="bg-red-600 hover:bg-red-700 text-white">Read Full Article</Button>
                       </Link>
@@ -428,14 +503,14 @@ Once on the system, enumeration revealed a SUID binary with a path traversal vul
             </h2>
             {filteredPosts.length === 0 ? (
               <div className="text-center py-12">
-                <p className="text-slate-400 text-lg">No articles found matching your criteria.</p>
+                <p className="text-gray-400 text-lg">No articles found matching your criteria.</p>
               </div>
             ) : (
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {filteredPosts.slice(1).map((post) => (
                   <Card
                     key={post.id}
-                    className="bg-slate-800/50 border-slate-700 hover:bg-slate-800/70 transition-colors"
+                    className="bg-gray-900/50 border border-red-900/20 hover:border-red-500/30 transition-colors"
                   >
                     <div className="aspect-video overflow-hidden rounded-t-lg">
                       <img
@@ -449,7 +524,7 @@ Once on the system, enumeration revealed a SUID binary with a path traversal vul
                         <Badge variant="secondary" className={getCategoryColor(post.category)}>
                           {post.category}
                         </Badge>
-                        <span className="text-sm text-slate-400">{post.date}</span>
+                        <span className="text-sm text-gray-400">{post.date}</span>
                       </div>
                       <CardTitle className="text-white hover:text-red-400 transition-colors">
                         <Link href={`/blog/${post.slug}`} className="block">
@@ -458,11 +533,11 @@ Once on the system, enumeration revealed a SUID binary with a path traversal vul
                       </CardTitle>
                     </CardHeader>
                     <CardContent>
-                      <CardDescription className="text-slate-300 mb-4">
+                      <CardDescription className="text-gray-300 mb-4">
                         {post.content.substring(0, 150)}...
                       </CardDescription>
                       <div className="flex items-center justify-between">
-                        <span className="text-sm text-slate-400">8 min read</span>
+                        <span className="text-sm text-gray-400">8 min read</span>
                         <Link
                           href={`/blog/${post.slug}`}
                           className="text-red-400 hover:text-red-300 text-sm font-medium"
@@ -480,17 +555,17 @@ Once on the system, enumeration revealed a SUID binary with a path traversal vul
             {filteredPosts.length > 6 && (
               <div className="flex justify-center mt-12">
                 <div className="flex space-x-2">
-                  <Button variant="outline" className="border-slate-600 text-slate-300 hover:bg-slate-700">
+                  <Button variant="outline" className="border-red-900/30 text-gray-300 hover:bg-red-900/20">
                     Previous
                   </Button>
                   <Button className="bg-red-600 hover:bg-red-700 text-white">1</Button>
-                  <Button variant="outline" className="border-slate-600 text-slate-300 hover:bg-slate-700">
+                  <Button variant="outline" className="border-red-900/30 text-gray-300 hover:bg-red-900/20">
                     2
                   </Button>
-                  <Button variant="outline" className="border-slate-600 text-slate-300 hover:bg-slate-700">
+                  <Button variant="outline" className="border-red-900/30 text-gray-300 hover:bg-red-900/20">
                     3
                   </Button>
-                  <Button variant="outline" className="border-slate-600 text-slate-300 hover:bg-slate-700">
+                  <Button variant="outline" className="border-red-900/30 text-gray-300 hover:bg-red-900/20">
                     Next
                   </Button>
                 </div>
@@ -501,9 +576,9 @@ Once on the system, enumeration revealed a SUID binary with a path traversal vul
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-slate-700 bg-slate-900/50 py-8 px-4 mt-20">
+      <footer className="border-t border-red-900/30 bg-black/50 py-8 px-4 mt-20">
         <div className="container mx-auto text-center">
-          <p className="text-slate-400">
+          <p className="text-gray-400">
             © {new Date().getFullYear()} Ye Yint Thu. All rights reserved. | Cybersecurity Blog
           </p>
         </div>
