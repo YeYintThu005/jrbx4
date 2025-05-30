@@ -552,7 +552,7 @@ Sent from Ye Yint Thu's Portfolio Contact Form
             </div>
             <div className="grid lg:grid-cols-3 gap-8">
               <div className="lg:col-span-2 space-y-8">
-                <Card className="bg-gradient-to-br from-gray-900/80 to-red-900/20 border border-red-700/30 hover:border-red-500/40 transition-all shadow-lg backdrop-blur-sm">
+                <Card className="bg-black/50 border border-red-900/30 overflow-hidden hover:border-red-500/30 transition-colors">
                   <CardHeader>
                     <CardTitle className="text-2xl text-white flex items-center">
                       <Terminal className="mr-3 h-5 w-5 text-red-400" />
