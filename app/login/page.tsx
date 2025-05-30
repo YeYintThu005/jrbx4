@@ -143,7 +143,7 @@ export default function LoginPage() {
       <div className="flex items-center justify-center min-h-[calc(100vh-80px)] px-4 relative z-10">
         <div className="w-full max-w-md">
           {/* Login Card */}
-          <Card className="bg-gradient-to-br from-gray-900/80 to-red-900/20 border border-red-700/40 backdrop-blur-sm shadow-lg shadow-red-500/10">
+          <Card className="bg-black/50 border border-red-900/30 backdrop-blur-sm shadow-lg shadow-red-500/10">
             <CardHeader className="text-center">
               <div className="mx-auto mb-4 p-4 bg-red-900/30 rounded-full border border-red-700/40">
                 <Terminal className="h-10 w-10 text-red-400" />
@@ -156,7 +156,7 @@ export default function LoginPage() {
             <CardContent>
               <form onSubmit={handleLogin} className="space-y-6">
                 {error && (
-                  <div className="p-4 bg-red-900/30 border border-red-700/40 rounded-lg backdrop-blur-sm">
+                  <div className="p-4 bg-black/50 border border-red-900/30 rounded-lg backdrop-blur-sm">
                     <p className="text-red-400 text-sm text-center font-medium">{error}</p>
                   </div>
                 )}
