@@ -358,7 +358,7 @@ Sent from Ye Yint Thu's Portfolio Contact Form
                     <div className="text-xl font-bold bg-gradient-to-r from-red-400 to-red-600 bg-clip-text text-transparent">
                       jrBX4
                     </div>
-                    <div className="text-xs text-red-400 font-medium">Security Elite</div>
+                    <div className="text-xs text-red-400 font-medium">Security Analyst</div>
                   </div>
                 </div>
                 <div className="absolute inset-0 bg-red-500/10 rounded-lg blur-md opacity-0 group-hover:opacity-100 transition-opacity"></div>
@@ -367,7 +367,7 @@ Sent from Ye Yint Thu's Portfolio Contact Form
                 <span className="text-2xl font-bold bg-gradient-to-r from-white to-red-200 bg-clip-text text-transparent">
                   Ye Yint Thu
                 </span>
-                <div className="text-xs text-red-400">Elite Penetration Tester</div>
+                <div className="text-xs text-red-400">Penetration Tester</div>
               </div>
             </div>
             <div className="hidden md:flex space-x-8">
@@ -409,7 +409,7 @@ Sent from Ye Yint Thu's Portfolio Contact Form
                       className="flex items-center space-x-2"
                     >
                       <Zap className="h-3 w-3" />
-                      <span>OSI Elite Member</span>
+                      <span>OSI  Member</span>
                     </a>
                   </Badge>
                   <h1 className="text-5xl md:text-6xl font-bold leading-tight">
@@ -421,7 +421,7 @@ Sent from Ye Yint Thu's Portfolio Contact Form
                   </h1>
                   <div className="flex items-center space-x-4">
                     <div className="h-px bg-gradient-to-r from-red-500 to-transparent w-20 animate-pulse"></div>
-                    <p className="text-lg text-gray-300">Elite Penetration Tester & Security Specialist</p>
+                    <p className="text-lg text-gray-300">Professtional Penetration Tester & Security Specialist</p>
                   </div>
                 </div>
                 <p className="text-lg text-gray-400 leading-relaxed max-w-lg">
@@ -492,7 +492,7 @@ Sent from Ye Yint Thu's Portfolio Contact Form
                           <div className="w-full h-full flex items-center justify-center">
                             <div className="text-center">
                               <Shield className="h-16 w-16 text-red-500/50 mx-auto mb-4" />
-                              <p className="text-red-400 text-sm">Elite Profile</p>
+                              <p className="text-red-400 text-sm">Profile</p>
                               <p className="text-gray-500 text-xs">Classified</p>
                             </div>
                           </div>
@@ -520,7 +520,7 @@ Sent from Ye Yint Thu's Portfolio Contact Form
                       </div>
                       <div className="flex justify-between items-center">
                         <span className="text-gray-300 font-medium">HTB Rank</span>
-                        <span className="text-red-400 font-bold">Elite Hacker</span>
+                        <span className="text-red-400 font-bold">Hacker</span>
                       </div>
                     </div>
                   </div>
@@ -543,10 +543,10 @@ Sent from Ye Yint Thu's Portfolio Contact Form
             <div className="text-center mb-20">
               <h2 className="text-4xl font-bold mb-6">
                 <span className="text-white">About The</span>
-                <span className="bg-gradient-to-r from-red-500 to-red-700 bg-clip-text text-transparent"> Elite</span>
+                <span className="bg-gradient-to-r from-red-500 to-red-700 bg-clip-text text-transparent"> </span>
               </h2>
               <p className="text-xl text-gray-400 max-w-3xl mx-auto">
-                Elite cybersecurity operative with advanced skills in digital infiltration, vulnerability research, and
+                Cybersecurity operative with advanced skills in digital infiltration, vulnerability research, and
                 security warfare.
               </p>
             </div>
@@ -556,12 +556,12 @@ Sent from Ye Yint Thu's Portfolio Contact Form
                   <CardHeader>
                     <CardTitle className="text-2xl text-white flex items-center">
                       <Terminal className="mr-3 h-5 w-5 text-red-400" />
-                      Elite Operations
+                        Operations
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <p className="text-gray-300 leading-relaxed">
-                      As an elite penetration tester and cybersecurity specialist, I excel in identifying and exploiting
+                      As a penetration tester and cybersecurity specialist, I excel in identifying and exploiting
                       critical security vulnerabilities across complex digital infrastructures. My expertise spans
                       advanced web application testing, network infiltration, and cutting-edge attack methodologies.
                     </p>
@@ -597,12 +597,12 @@ Sent from Ye Yint Thu's Portfolio Contact Form
                   <CardHeader>
                     <CardTitle className="text-2xl text-white flex items-center">
                       <Users className="mr-3 h-5 w-5 text-red-400" />
-                      OSI Elite Division
+                      OSI  Division
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
                     <p className="text-gray-300 leading-relaxed">
-                      Elite member of the{" "}
+                       Member of the{" "}
                       <a
                         href="https://www.offsecinitiative.net"
                         target="_blank"
@@ -611,7 +611,7 @@ Sent from Ye Yint Thu's Portfolio Contact Form
                       >
                         OSI (Offensive Security Initiative)
                       </a>{" "}
-                      elite division, spearheading advanced security research and developing next-generation penetration
+                      Pro division, spearheading advanced security research and developing next-generation penetration
                       testing methodologies. Contributing to the global cybersecurity community through innovative
                       attack vectors and defensive strategies.
                     </p>
@@ -623,7 +623,7 @@ Sent from Ye Yint Thu's Portfolio Contact Form
                   <CardHeader>
                     <CardTitle className="text-xl text-white flex items-center">
                       <Award className="mr-3 h-5 w-5 text-red-400" />
-                      Elite Certifications
+                      Certifications
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
@@ -634,7 +634,7 @@ Sent from Ye Yint Thu's Portfolio Contact Form
                           {cert.status === "certified" && <Star className="mr-1 h-3 w-3" />}
                           {cert.status === "in-progress" && <TrendingUp className="mr-1 h-3 w-3" />}
                           {cert.status === "certified"
-                            ? "Elite"
+                            ? "Certified"
                             : cert.status === "in-progress"
                               ? "Training"
                               : "Planned"}
@@ -647,14 +647,14 @@ Sent from Ye Yint Thu's Portfolio Contact Form
                   <CardHeader>
                     <CardTitle className="text-xl text-white flex items-center">
                       <Target className="mr-3 h-5 w-5 text-red-400" />
-                      HTB Elite Profile
+                      Hack The Box Profile
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-4">
                       <div>
                         <p className="text-gray-300 font-medium">Username: jrBX4</p>
-                        <p className="text-red-400 text-sm font-medium">Elite Hacker Status</p>
+                        <p className="text-red-400 text-sm font-medium">Hacker Status</p>
                       </div>
                       <Button
                         variant="outline"
@@ -665,7 +665,7 @@ Sent from Ye Yint Thu's Portfolio Contact Form
                         }
                       >
                         <ExternalLink className="mr-2 h-4 w-4" />
-                        View Elite Profile
+                        View Profile
                       </Button>
                     </div>
                   </CardContent>
@@ -682,14 +682,13 @@ Sent from Ye Yint Thu's Portfolio Contact Form
           <div className="max-w-7xl mx-auto">
             <div className="text-center mb-20">
               <h2 className="text-4xl font-bold mb-6">
-                <span className="text-white">Elite</span>
                 <span className="bg-gradient-to-r from-red-500 to-red-700 bg-clip-text text-transparent">
                   {" "}
                   Operations
                 </span>
               </h2>
               <p className="text-xl text-gray-400 max-w-3xl mx-auto">
-                Professional journey through elite cybersecurity operations and advanced penetration testing
+                Professional journey through cybersecurity operations and advanced penetration testing
                 engagements.
               </p>
             </div>
@@ -732,7 +731,6 @@ Sent from Ye Yint Thu's Portfolio Contact Form
           <div className="max-w-7xl mx-auto">
             <div className="text-center mb-20">
               <h2 className="text-4xl font-bold mb-6">
-                <span className="text-white">Elite</span>
                 <span className="bg-gradient-to-r from-red-500 to-red-700 bg-clip-text text-transparent">
                   {" "}
                   Services
@@ -749,7 +747,7 @@ Sent from Ye Yint Thu's Portfolio Contact Form
                   <div className="p-4 bg-red-600/20 rounded-lg w-fit group-hover:bg-red-500/30 transition-colors border border-red-500/30">
                     <Target className="h-6 w-6 text-red-400" />
                   </div>
-                  <CardTitle className="text-xl text-white">Elite Penetration Testing</CardTitle>
+                  <CardTitle className="text-xl text-white">Penetration Testing</CardTitle>
                   <CardDescription className="text-gray-400">
                     Advanced security assessments using cutting-edge techniques to identify critical vulnerabilities.
                   </CardDescription>
@@ -807,7 +805,7 @@ Sent from Ye Yint Thu's Portfolio Contact Form
                   </div>
                   <CardTitle className="text-xl text-white">Security Architecture</CardTitle>
                   <CardDescription className="text-gray-400">
-                    Elite guidance on advanced security implementations and threat modeling strategies.
+                    Provides guidance on advanced security implementations and threat modeling strategies.
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -818,7 +816,7 @@ Sent from Ye Yint Thu's Portfolio Contact Form
                     </li>
                     <li className="flex items-center">
                       <div className="w-2 h-2 bg-red-500 rounded-full mr-3"></div>
-                      Elite Security Design
+                      Security Design
                     </li>
                     <li className="flex items-center">
                       <div className="w-2 h-2 bg-red-500 rounded-full mr-3"></div>
@@ -838,14 +836,14 @@ Sent from Ye Yint Thu's Portfolio Contact Form
           <div className="max-w-7xl mx-auto">
             <div className="text-center mb-20">
               <h2 className="text-4xl font-bold mb-6">
-                <span className="text-white">Elite</span>
+                
                 <span className="bg-gradient-to-r from-red-500 to-red-700 bg-clip-text text-transparent">
                   {" "}
                   Intelligence
                 </span>
               </h2>
               <p className="text-xl text-gray-400 max-w-3xl mx-auto">
-                Advanced cybersecurity intelligence, penetration testing methodologies, and elite security research.
+                Advanced cybersecurity intelligence, penetration testing methodologies, and detailed security research.
               </p>
             </div>
             {posts.length > 0 ? (
@@ -900,7 +898,7 @@ Sent from Ye Yint Thu's Portfolio Contact Form
             ) : (
               <div className="text-center py-20">
                 <BookOpen className="h-16 w-16 text-gray-700 mx-auto mb-6" />
-                <p className="text-gray-400 text-xl">Elite intelligence classified.</p>
+                <p className="text-gray-400 text-xl"> Intelligence classified.</p>
                 <p className="text-gray-600 text-sm mt-2">Access pending authorization clearance.</p>
               </div>
             )}
@@ -927,14 +925,14 @@ Sent from Ye Yint Thu's Portfolio Contact Form
                 <span className="bg-gradient-to-r from-red-500 to-red-700 bg-clip-text text-transparent"> Contact</span>
               </h2>
               <p className="text-xl text-gray-400 max-w-3xl mx-auto">
-                Ready to deploy elite cybersecurity services? Initiate secure communication channel to discuss your
+                Ready to deploy cybersecurity services? Initiate secure communication channel to discuss your
                 digital defense requirements.
               </p>
             </div>
             <div className="grid lg:grid-cols-2 gap-16">
               <div className="space-y-8">
                 <div>
-                  <h3 className="text-2xl font-bold text-white mb-8">Elite Contact Channels</h3>
+                  <h3 className="text-2xl font-bold text-white mb-8">Contact Channels</h3>
                   <div className="space-y-6">
                     <div className="flex items-center space-x-4">
                       <div className="p-4 bg-red-600/20 rounded-lg border border-red-500/30">
@@ -964,21 +962,21 @@ Sent from Ye Yint Thu's Portfolio Contact Form
                         <Users className="h-6 w-6 text-red-400" />
                       </div>
                       <div>
-                        <p className="text-gray-300 font-medium text-lg">Elite Division</p>
+                        <p className="text-gray-300 font-medium text-lg">Division</p>
                         <a
                           href="https://www.offsecinitiative.net"
                           target="_blank"
                           rel="noopener noreferrer"
                           className="text-gray-400 hover:text-red-400 transition-colors"
                         >
-                          OSI Elite Member
+                          OSI Member
                         </a>
                       </div>
                     </div>
                   </div>
                 </div>
                 <div>
-                  <h4 className="text-xl font-bold text-white mb-6">Elite Network</h4>
+                  <h4 className="text-xl font-bold text-white mb-6"> Network</h4>
                   <div className="flex space-x-4">
                     <a
                       href="https://github.com"
@@ -1011,7 +1009,7 @@ Sent from Ye Yint Thu's Portfolio Contact Form
                 <CardHeader>
                   <CardTitle className="text-2xl text-white">Secure Communication</CardTitle>
                   <CardDescription className="text-gray-400">
-                    Initiate encrypted communication channel for elite cybersecurity services.
+                    Initiate encrypted communication channel for cybersecurity services.
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -1082,7 +1080,7 @@ Sent from Ye Yint Thu's Portfolio Contact Form
                         value={formData.subject}
                         onChange={handleInputChange}
                         className="w-full px-4 py-3 bg-gray-900/50 border border-red-700/30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
-                        placeholder="Elite Security Assessment Request"
+                        placeholder="Security Assessment Request"
                         required
                       />
                     </div>
@@ -1094,7 +1092,7 @@ Sent from Ye Yint Thu's Portfolio Contact Form
                         value={formData.message}
                         onChange={handleInputChange}
                         className="w-full px-4 py-3 bg-gray-900/50 border border-red-700/30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent resize-none"
-                        placeholder="Describe your elite cybersecurity requirements..."
+                        placeholder="Describe your cybersecurity requirements..."
                         required
                       />
                     </div>
@@ -1128,7 +1126,7 @@ Sent from Ye Yint Thu's Portfolio Contact Form
       <footer className="relative border-t border-red-900/30 bg-black/90 backdrop-blur-xl py-8 px-6">
         <div className="container mx-auto text-center">
           <p className="text-gray-500">
-            © {new Date().getFullYear()} Ye Yint Thu - jrBX4. All rights reserved. | Elite Cybersecurity Operations
+            © {new Date().getFullYear()} Ye Yint Thu - jrBX4. All rights reserved. | Cybersecurity Operations
           </p>
         </div>
       </footer>
