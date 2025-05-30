@@ -593,7 +593,7 @@ Sent from Ye Yint Thu's Portfolio Contact Form
                     </div>
                   </CardContent>
                 </Card>
-                <Card className="bg-gradient-to-br from-gray-900/80 to-red-900/20 border border-red-700/30 hover:border-red-500/40 transition-all shadow-lg backdrop-blur-sm">
+                <Card className="bg-black/50 border border-red-900/30 hover:border-red-500/40 transition-all shadow-lg backdrop-blur-sm">
                   <CardHeader>
                     <CardTitle className="text-2xl text-white flex items-center">
                       <Users className="mr-3 h-5 w-5 text-red-400" />
@@ -619,7 +619,7 @@ Sent from Ye Yint Thu's Portfolio Contact Form
                 </Card>
               </div>
               <div className="space-y-8">
-                <Card className="bg-gradient-to-br from-gray-900/80 to-red-900/20 border border-red-700/30 hover:border-red-500/40 transition-all shadow-lg backdrop-blur-sm">
+                <Card className="bg-black/50 border border-red-900/30 hover:border-red-500/40 transition-all shadow-lg backdrop-blur-sm">
                   <CardHeader>
                     <CardTitle className="text-xl text-white flex items-center">
                       <Award className="mr-3 h-5 w-5 text-red-400" />
@@ -643,7 +643,7 @@ Sent from Ye Yint Thu's Portfolio Contact Form
                     ))}
                   </CardContent>
                 </Card>
-                <Card className="bg-gradient-to-br from-gray-900/80 to-red-900/20 border border-red-700/30 hover:border-red-500/40 transition-all shadow-lg backdrop-blur-sm">
+                <Card className="bg-black/50 border border-red-900/30 hover:border-red-500/40 transition-all shadow-lg backdrop-blur-sm">
                   <CardHeader>
                     <CardTitle className="text-xl text-white flex items-center">
                       <Target className="mr-3 h-5 w-5 text-red-400" />
@@ -697,7 +697,7 @@ Sent from Ye Yint Thu's Portfolio Contact Form
               {experiences.map((exp, index) => (
                 <Card
                   key={exp.id}
-                  className="bg-gradient-to-br from-gray-900/80 to-red-900/20 border border-red-700/30 hover:border-red-500/40 transition-all shadow-lg backdrop-blur-sm"
+                  className="bg-black/50 border border-red-900/30 hover:border-red-500/40 transition-all shadow-lg backdrop-blur-sm"
                 >
                   <CardContent className="p-6">
                     <div className="flex items-start justify-between">
